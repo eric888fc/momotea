@@ -234,10 +234,10 @@
 
 ⚠️ 重要提醒
 
-修改後端設定： 馬上打開您的 src/main/resources/application.properties，修改綠界的 Return URL：
+修改後端設定： 打開您的 src/main/resources/application.properties，修改綠界的 Return URL：
 
 記得後面要加上 /api/wallet/ecpay/callback(或要呼叫的api):
-'ecpay.return-url=https://xxxx-xxx-xx.ngrok-free.dev /api/wallet/ecpay/callback'
+'ecpay.return-url=https://gayla-unbriefed-unreluctantly.ngrok-free.dev/api/wallet/ecpay/callback'
 重啟 Spring Boot： 修改設定檔後，記得重啟後端程式。
 
 注意： Ngrok 免費版的網址每次重新啟動 Ngrok 都會變。所以如果您關掉了 CMD視窗再重開，就要重複步驟 1~3 (去 application.properties 更新網址)。
