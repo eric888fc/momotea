@@ -225,6 +225,22 @@
 3.  **開始使用:**
     * 在您的瀏覽器輸入 `http://localhost:8080/` ，就可以開啟角色選擇畫面了。
     <img width="1918" height="941" alt="image" src="https://github.com/user-attachments/assets/1a35b2f0-72d6-47a2-a797-51dc6041cfb2" />
+
+### 4. Ngrok(先安裝ngrok.exe):
+請按照以下步驟操作，只需 3 分鐘：
+
+1. **開啟Ngrok:**
+輸入:'ngrok http --domain=gayla-unbriefed-unreluctantly.ngrok-free.dev 8080'
+
+⚠️ 重要提醒
+
+修改後端設定： 打開您的 src/main/resources/application.properties，修改綠界的 Return URL：
+
+記得後面要加上 /api/wallet/ecpay/callback(或要呼叫的api):
+'ecpay.return-url=https://gayla-unbriefed-unreluctantly.ngrok-free.dev/api/wallet/ecpay/callback'
+重啟 Spring Boot： 修改設定檔後，記得重啟後端程式。
+
+注意： Ngrok 免費版的網址每次重新啟動 Ngrok 都會變。所以如果您關掉了 CMD視窗再重開，就要重複步驟 1~3 (去 application.properties 更新網址)。
 ---
 
 ## 🏛️ 專案架構 (Architecture)
