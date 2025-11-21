@@ -154,6 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     password: password
                 };
             } else {
+                // BUYER / SELLER 共用
                 url = `${API_BASE}/login`;
                 payload = {
                     email: account,
@@ -174,30 +175,38 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
 
                 const data = await res.json();
-                // { message, userId, name, email, role, token, adminCode }
+                // 預期後端回傳: { message, userId, name, email, role, token, adminCode }
 
+                // 如果按的是「管理員登入」但後端說不是 ADMIN，就擋掉
                 if (role === "ADMIN" && data.role !== "ADMIN") {
                     setMessage("此帳號不是系統管理員。", "error");
                     return;
                 }
 
-                // 儲存登入資訊
+                // ===== 把舊的登入資訊清乾淨，避免 BUYER / SELLER 殘留 =====
+                localStorage.removeItem("authToken");
+                localStorage.removeItem("userRole");
+                localStorage.removeItem("userName");
+                localStorage.removeItem("adminCode");
+                // 舊版留下來的 key 一併清掉
+                localStorage.removeItem("token");
+                localStorage.removeItem("role");
+                localStorage.removeItem("name");
+
+                // ===== 儲存這次登入資訊（全專案統一用這幾顆）=====
                 localStorage.setItem("authToken", data.token);
-                localStorage.setItem("userRole", data.role);
+                localStorage.setItem("userRole", data.role); // "BUYER" / "SELLER" / "ADMIN"
+
                 if (data.name) {
                     localStorage.setItem("userName", data.name);
-                } else {
-                    localStorage.removeItem("userName");
                 }
                 if (data.adminCode) {
                     localStorage.setItem("adminCode", data.adminCode);
-                } else {
-                    localStorage.removeItem("adminCode");
                 }
 
                 setMessage(data.message || "登入成功。", "success");
 
-                // 依角色導頁（檔名如有不同就改這裡）
+                // 依角色導頁
                 if (data.role === "BUYER") {
                     window.location.href = "buyer-home.html";
                 } else if (data.role === "SELLER") {

@@ -19,7 +19,7 @@ public class AdminReportVO {
     private LocalDate startDate;
     private LocalDate endDate;
 
-    private long totalOrderCount;
+   
     private BigDecimal totalOrderAmount;
     private BigDecimal averageOrderAmount;
 
@@ -33,4 +33,6 @@ public class AdminReportVO {
 
     /** 熱銷商品類別 Top5（依數量） */
     private List<CategorySalesVO> topCategories;
+
+    private int totalOrderCount;
 }
