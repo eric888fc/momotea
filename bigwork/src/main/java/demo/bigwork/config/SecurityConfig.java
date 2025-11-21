@@ -63,6 +63,8 @@ public class SecurityConfig {
 	    // 我們在允許的列表中，
 	    // 加入 "http://localhost:5500" (Live Server 的預設位址)
 	    configuration.setAllowedOrigins(Arrays.asList(
+	        "http://localhost:5173", // (Vite，先留著)
+	        "http://localhost:3000", // (create-react-app，先留著)
 	        "http://127.0.0.1:5500", // (Live Server)
 	        "http://localhost:5500"  // (Live Server)
 	    ));
@@ -107,6 +109,11 @@ public class SecurityConfig {
 
 				// 2. (關鍵) 設定「授權 (Authorization)」規則
 				.authorizeHttpRequests(authz -> authz
+					    
+						//deepseek
+						.requestMatchers("/api/ai/**").permitAll() // <<< allow all
+					 
+					    
 						// (重要) 放行所有 /api/auth/** 的請求 (註冊, 登入, 忘記密碼...)
 						.requestMatchers("/api/auth/**").permitAll()
 						// 告訴 Spring Security，「所有」 /uploads/ 路徑下的請求 (圖片)
