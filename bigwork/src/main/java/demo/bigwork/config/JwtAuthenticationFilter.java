@@ -48,6 +48,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         
+    	String path=request.getRequestURI();
+    	//AI API:
+    	if(path.startsWith("/api/ai/")) {
+    		filterChain.doFilter(request, response);
+    		return;	//exits the current method
+    	}
+    	
+    	
         // 1. 取得 "Authorization" 標頭 (Header)
         final String authHeader = request.getHeader("Authorization");
 

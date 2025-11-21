@@ -11,9 +11,14 @@
 
 <body class="auth-page">
 
+
     <div class="auth-container">
+        
+        
         <h1>歡迎來到 E-Shop</h1>
+        
         <p>請選擇您的身分：</p>
+        
         
         <div class="button-group">
             <a href="login.html?role=BUYER" class="role-button buyer">
@@ -24,6 +29,13 @@
             </a>
         </div>
     </div>
-
+    
+<div id="aiChatbot" style="position:fixed;bottom:20px;right:20px;width:300px;height:400px;background:#fff;border:1px solid #ccc;box-shadow:0 0 10px rgba(0,0,0,0.3);z-index:9999;padding:10px;">
+    <h4>AI 助手</h4>
+    <textarea id="aiPrompt" placeholder="輸入你的問題..." style="width:100%;height:60px;"></textarea>
+    <button onclick="askAI()">送出</button>
+    <div id="aiResponse" style="margin-top:10px;overflow-y:auto;height:250px;"></div>
+    <script src="../js/ai-chatbot.js"></script>
+</div>
 </body>
 </html>
