@@ -44,7 +44,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (3,'奸商','s1@gmail.com','$2a$10$dgjC6LR0WxbPS5fsCIHVG.ERBUH8ymbv6N4IjzO4zbJuyF41N0Z6u','SELLER','0912345678','高雄市','2025-11-03 08:35:32'),(4,'雅買家','b1@gmail.com','$2a$10$ajeJAPQAC15edg8eJsFYCOIzLkEi0FaBYFTGYfv3ClNKyZqEf8IBG','BUYER','0912345678','taipei','2025-11-05 01:45:22'),(9,'eeee','s2@gmail.com','$2a$10$160tyoa5IlXKf2NSDlcCjeHVgOrpmk25NpnrWQJ6FWYaS29.wX3oe','SELLER','0912345678','taipei','2025-11-10 01:38:11'),(10,'666','b2@gmail.com','$2a$10$72OZsDAG/qysJr9p8POlougYwZZyLyWcAA/DckPDROqrIVGCP/UWy','BUYER','0912345678','台中','2025-11-12 09:32:02'),(11,'奧客','b3@gmail.com','$2a$10$9kXPf.KTRlWGABZxFNjAIujMObU77tjOrNyJ.XQ0s7YPfHi9fU4nS','BUYER','0912345678','花蓮','2025-11-14 06:48:10'),(16,'test','s3@gmail.com','$2a$10$winZjMMyiegDcQn9a7wNXOgcDYhtzBQV.lUav8pw/52WoFYGBwrmq','SELLER','0912345678','台南','2025-11-14 07:47:50');
+INSERT INTO `users` VALUES (3,'奸商','s1@gmail.com','$2a$10$dgjC6LR0WxbPS5fsCIHVG.ERBUH8ymbv6N4IjzO4zbJuyF41N0Z6u','SELLER','0912345678','高雄市','2025-11-03 08:35:32'),(4,'雅買家','b1@gmail.com','$2a$10$BOC63u0wrLAhYplmMl/WGO6XVrcDghRJTwYO7CWNcRmHRx19AZbSu','BUYER','0912345678','taipei','2025-11-05 01:45:22'),(9,'eeee','s2@gmail.com','$2a$10$160tyoa5IlXKf2NSDlcCjeHVgOrpmk25NpnrWQJ6FWYaS29.wX3oe','SELLER','0912345678','taipei','2025-11-10 01:38:11'),(10,'666','b2@gmail.com','$2a$10$72OZsDAG/qysJr9p8POlougYwZZyLyWcAA/DckPDROqrIVGCP/UWy','BUYER','0912345678','台中','2025-11-12 09:32:02'),(11,'奧客','b3@gmail.com','$2a$10$9kXPf.KTRlWGABZxFNjAIujMObU77tjOrNyJ.XQ0s7YPfHi9fU4nS','BUYER','0912345678','花蓮','2025-11-14 06:48:10'),(16,'test','s3@gmail.com','$2a$10$winZjMMyiegDcQn9a7wNXOgcDYhtzBQV.lUav8pw/52WoFYGBwrmq','SELLER','0912345678','台南','2025-11-14 07:47:50');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -57,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-19 12:38:12
+-- Dump completed on 2025-11-14 17:31:34

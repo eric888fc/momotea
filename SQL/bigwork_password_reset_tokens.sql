@@ -33,7 +33,7 @@ CREATE TABLE `password_reset_tokens` (
   UNIQUE KEY `token_UNIQUE` (`token`),
   KEY `fk_password_reset_tokens_users_idx` (`user_id`),
   CONSTRAINT `fk_password_reset_tokens_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -42,7 +42,7 @@ CREATE TABLE `password_reset_tokens` (
 
 LOCK TABLES `password_reset_tokens` WRITE;
 /*!40000 ALTER TABLE `password_reset_tokens` DISABLE KEYS */;
-INSERT INTO `password_reset_tokens` VALUES (4,'c6ffdabf-6f3b-41c2-acbb-b721ba3da91e',9,'2025-11-10 03:20:47'),(5,'a90dabc6-3046-4700-bb3e-b9798a8783c5',9,'2025-11-10 03:20:49'),(6,'e3f4439b-633b-4166-aba0-f836eb296d75',9,'2025-11-10 03:39:08');
+INSERT INTO `password_reset_tokens` VALUES (4,'c6ffdabf-6f3b-41c2-acbb-b721ba3da91e',9,'2025-11-10 03:20:47'),(5,'a90dabc6-3046-4700-bb3e-b9798a8783c5',9,'2025-11-10 03:20:49'),(6,'e3f4439b-633b-4166-aba0-f836eb296d75',9,'2025-11-10 03:39:08'),(10,'f28f01bb-fd42-4ff8-afb4-da7418b35463',4,'2025-11-11 04:06:10');
 /*!40000 ALTER TABLE `password_reset_tokens` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-19 12:38:12
+-- Dump completed on 2025-11-14 17:31:33
