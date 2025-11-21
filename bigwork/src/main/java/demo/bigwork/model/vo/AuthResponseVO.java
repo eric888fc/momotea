@@ -5,21 +5,33 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 登入與驗證相關的回傳物件
+ * 會在 AuthController.login() / adminLogin() 使用
+ */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor // (Lombok) 自動生成全參數建構子
+@AllArgsConstructor   // 會自動生成含所有欄位的建構子
 public class AuthResponseVO {
-    
+
+    /** 提示訊息，例如：登入成功、管理員登入成功 */
     private String message;
+
+    /** 使用者 ID */
     private Long userId;
+
+    /** 使用者姓名 */
     private String name;
+
+    /** 使用者 Email */
     private String email;
+
+    /** 角色：BUYER / SELLER / ADMIN */
     private UserRole role;
-    
-    // (關鍵) 新增 "token" 欄位
-    private String token; 
-    
-    // (教授提醒) 由於 Lombok 的 @AllArgsConstructor
-    // 會自動更新，我們不需要手動改建構子。
-    // 但如果沒有用 Lombok，你就必須手動更新建構子。
+
+    /** JWT Token */
+    private String token;
+
+    /** 管理員原編（只有 ADMIN 會有值，其它角色為 null） */
+    private String adminCode;
 }

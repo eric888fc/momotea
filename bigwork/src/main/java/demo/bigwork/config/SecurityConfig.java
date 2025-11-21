@@ -63,6 +63,8 @@ public class SecurityConfig {
 	    // 我們在允許的列表中，
 	    // 加入 "http://localhost:5500" (Live Server 的預設位址)
 	    configuration.setAllowedOrigins(Arrays.asList(
+	        "http://localhost:5173", // (Vite，先留著)
+	        "http://localhost:3000", // (create-react-app，先留著)
 	        "http://127.0.0.1:5500", // (Live Server)
 	        "http://localhost:5500"  // (Live Server)
 	    ));
@@ -115,13 +117,7 @@ public class SecurityConfig {
 						// 允許「任何人」訪問所有 /api/public/** 的請求
 						// (e.g., /api/public/products)
 						.requestMatchers("/api/public/**").permitAll().requestMatchers("/api/cart/**").hasRole("BUYER")
-						// 2. (★ 關鍵新增 ★) 開放前端靜態資源
-		                // 允許根路徑、index.html、所有 .html 檔案
-		                .requestMatchers("/", "/index.html", "/*.html").permitAll()
-		                // 允許 css 和 js 資料夾內的所有檔案
-		                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() 
-		                // 允許 favicon (瀏覽器圖示)
-		                .requestMatchers("/favicon.ico").permitAll()
+
 						// 所有 /api/orders/** 路徑下的請求
 						// (例如 /api/orders/checkout, /api/orders/me)
 						// 都「必須」具備 "BUYER" 角色

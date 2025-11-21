@@ -71,4 +71,14 @@ public class AuthHelperService {
         }
         return user;
     }
+    
+    // 新增：只有 ADMIN 才能呼叫的方法
+    public UserPO getCurrentAuthenticatedAdmin() throws AccessDeniedException {
+        UserPO user = getCurrentAuthenticatedUser();
+
+        if (user.getRole() != UserRole.ADMIN) {
+            throw new AccessDeniedException("只有系統管理員 (ADMIN) 才能執行此操作");
+        }
+        return user;
+    }
 }
