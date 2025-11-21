@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>系統管理員後台</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --fg: #111827;
+            --border: #e5e7eb;
+            --muted: #6b7280;
+            --primary: #22c55e;
+            --primary-dark: #064e3b;
+            --accent: #0ea5e9;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "微軟正黑體", system-ui, -apple-system;
+            background: var(--bg);
+            color: var(--fg);
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(15,23,42,.08);
+        }
+        .topbar-title { font-size: 18px; font-weight: 600; }
+        .topbar-right { font-size: 13px; color: var(--muted); }
+        .link {
+            margin-left: 10px;
+            font-size: 12px;
+            color: var(--muted);
+            cursor: pointer;
+        }
+        .link:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 1150px;
+            margin: 24px auto 40px;
+            padding: 0 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 24px rgba(15,23,42,.06);
+            padding: 16px 20px;
+            margin-bottom: 18px;
+        }
+        .card-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+
+        .btn-group {
+            display: inline-flex;
+            background: #e5e7eb;
+            padding: 3px;
+            border-radius: 999px;
+            margin-bottom: 12px;
+        }
+        .btn, .btn-outline, .btn-small, .btn-table {
+            border: none;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 999px;
+            padding: 6px 12px;
+            background: transparent;
+        }
+        .btn { color: #374151; }
+        .btn.active {
+            background: var(--primary);
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        .btn-outline {
+            border: 1px solid var(--border);
+            background: #fff;
+            margin-left: 8px;
+        }
+        .btn-small {
+            border: 1px solid var(--border);
+            background: #fff;
+            padding: 4px 10px;
+        }
+        .btn-small.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #f9fafb;
+        }
+        .btn-table {
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 11px;
+            padding: 2px 6px;
+            margin-right: 4px;
+        }
+        .btn-danger { border-color: #f87171; color: #b91c1c; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        th, td { padding: 6px 4px; text-align: left; }
+        th { color: var(--muted); font-weight: 500; }
+        tr + tr { border-top: 1px solid var(--border); }
+
+        .grid, .grid-2 {
+            display: grid;
+            gap: 16px;
+            margin-top: 12px;
+        }
+        .grid { grid-template-columns: 2fr 1.3fr; }
+        .grid-2 { grid-template-columns: 1.6fr 1.4fr; }
+        @media (max-width: 900px) {
+            .grid, .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        .error { color: #b91c1c; font-size: 12px; min-height: 16px; margin-top: 6px; }
+
+        .export-row { text-align: right; margin-top: 6px; }
+
+        #manageDetailTitle { margin-top: 10px; }
+
+        .section-switch { margin-bottom: 6px; }
+    </style>
+</head>
+<body>
+<div class="topbar">
+    <div class="topbar-title">系統管理員後台</div>
+    <div class="topbar-right">
+        管理員原編：<span id="adminCodeDisplay">-</span>
+        <span class="link" id="logoutBtn">登出</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- 報表區：切換週 / 季 -->
+    <div class="btn-group">
+        <button class="btn active" id="weeklyBtn">本週營運報表</button>
+        <button class="btn" id="quarterlyBtn">本季營運報表</button>
+    </div>
+
+    <div class="card">
+        <div class="card-title" id="reportTitle">尚未產生報表</div>
+        <div class="card-sub" id="reportRange"></div>
+
+        <table>
+            <tbody>
+            <tr><th style="width:180px;">訂單總數（完成）</th><td id="totalOrderCount">-</td></tr>
+            <tr><th>訂單總金額</th><td id="totalOrderAmount">-</td></tr>
+            <tr><th>平均訂單金額</th><td id="averageOrderAmount">-</td></tr>
+            <tr><th>小額訂單數 (≤500)</th><td id="smallOrderCount">-</td></tr>
+            <tr><th>中額訂單數 (500~2000)</th><td id="mediumOrderCount">-</td></tr>
+            <tr><th>大額訂單數 (≥2000)</th><td id="largeOrderCount">-</td></tr>
+            <tr><th>新增買家數</th><td id="newBuyerCount">-</td></tr>
+            <tr><th>新增賣家數</th><td id="newSellerCount">-</td></tr>
+            <tr><th>新增會員總數</th><td id="totalNewUserCount">-</td></tr>
+            </tbody>
+        </table>
+
+        <div class="error" id="errorMsg"></div>
+        <div class="export-row">
+            <button class="btn-outline" id="exportBtn">匯出目前報表 (Excel)</button>
+        </div>
+    </div>
+
+    <!-- 第一排圖表 -->
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">訂單金額區間</div>
+            <div class="card-sub">小額 / 中額 / 大額訂單數一目了然。</div>
+            <canvas id="barChartRange" height="150"></canvas>
+        </div>
+        <div class="card">
+            <div class="card-title">新會員比例</div>
+            <div class="card-sub">比較新增買家與賣家的比例。</div>
+            <canvas id="pieChartMembers" height="150"></canvas>
+        </div>
+    </div>
+
+    <!-- 第二排：Top 類別 + 財務 -->
+    <div class="grid-2">
+        <div class="card">
+            <div class="card-title">熱銷商品類別 Top 5</div>
+            <div class="card-sub">依銷售數量排序。</div>
+
+            <table>
+                <thead>
+                <tr><th>排行</th><th>類別名稱</th><th>銷售數量</th></tr>
+                </thead>
+                <tbody id="categoryTableBody"></tbody>
+            </table>
+            <canvas id="barChartCategory" height="150" style="margin-top:8px;"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-title">財務報表：本期 vs 上期</div>
+            <div class="card-sub" id="financialRange">尚未載入</div>
+
+            <table>
+                <tbody>
+                <tr><th>本期營收</th><td id="curRevenue">-</td></tr>
+                <tr><th>上期營收</th><td id="prevRevenue">-</td></tr>
+                <tr><th>營收差額</th><td id="revDiff">-</td></tr>
+                <tr><th>營收成長率(%)</th><td id="revGrowth">-</td></tr>
+                <tr><th>本期訂單數</th><td id="curOrderCount">-</td></tr>
+                <tr><th>上期訂單數</th><td id="prevOrderCount">-</td></tr>
+                <tr><th>訂單數差值</th><td id="orderDiff">-</td></tr>
+                <tr><th>訂單成長率(%)</th><td id="orderGrowth">-</td></tr>
+                </tbody>
+            </table>
+            <canvas id="barChartFinance" height="150" style="margin-top:8px;"></canvas>
+        </div>
+    </div>
+
+    <!-- 會員管理 -->
+    <div class="card">
+        <div class="card-title">會員管理</div>
+        <div class="card-sub">查看與管理買家 / 賣家帳號，包含訂單、上架商品與刪除帳號。</div>
+
+        <div class="section-switch">
+            <button class="btn-small active" id="buyerManageBtn">買家管理</button>
+            <button class="btn-small" id="sellerManageBtn">賣家管理</button>
+        </div>
+
+        <!-- 買家列表 -->
+        <div id="buyerManageSection">
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:60px;">ID</th>
+                    <th style="width:120px;">姓名</th>
+                    <th style="width:160px;">Email</th>
+                    <th style="width:80px;">電話</th>
+                    <th>預設地址</th>
+                    <th style="width:120px;">建立時間</th>
+                    <th style="width:170px;">操作</th>
+                </tr>
+                </thead>
+                <tbody id="buyerTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 賣家列表 -->
+        <div id="sellerManageSection" style="display:none;">
+            <table>
+                <thead>
+                <tr>
+                    <th style="width:60px;">ID</th>
+                    <th style="width:120px;">姓名</th>
+                    <th style="width:160px;">Email</th>
+                    <th style="width:80px;">電話</th>
+                    <th>預設地址</th>
+                    <th style="width:120px;">建立時間</th>
+                    <th style="width:220px;">操作</th>
+                </tr>
+                </thead>
+                <tbody id="sellerTableBody"></tbody>
+            </table>
+        </div>
+
+        <!-- 詳細列表：訂單 / 商品 -->
+        <div>
+            <div class="card-sub" id="manageDetailTitle">請先選擇一位會員查看訂單 / 商品。</div>
+            <table>
+                <thead id="manageDetailHead"></thead>
+                <tbody id="manageDetailBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 如果你把 JS 放到 /frontend-js/admin-dashboard.js，就把路徑改成那裡 -->
+<script src="../js/admin-dashboard.js"></script>
+</body>
+</html>

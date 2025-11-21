@@ -4,74 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登入 / 註冊</title>
-    
+
+    <!-- 保留你原本共用的 CSS -->
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/auth.css">
+
+    <style>
+        /* 角色切換小標籤，不會動到原本版型 */
+        .role-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+        .role-tab {
+            flex: 1;
+            padding: 6px 0;
+            text-align: center;
+            border-radius: 999px;
+            border: 1px solid #ccc;
+            background: #f5f5f5;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .role-tab.active {
+            background: #22c55e;
+            border-color: #22c55e;
+            color: #022c22;
+            font-weight: 600;
+        }
+        .role-hint {
+            text-align: center;
+            font-size: 0.85rem;
+            margin: 0 0 10px 0;
+            color: #555;
+        }
+
+        .message {
+            min-height: 20px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .error-message {
+            color: #e11d48;
+        }
+        .success-message {
+            color: #16a34a;
+        }
+    </style>
 </head>
 
 <body class="auth-page">
-    
-    <div class="auth-container form-container">
-        <h1 id="page-title">登入</h1>
-        <div id="message-container" class="message"></div>
 
-        <form id="login-form">
-            <div class="form-group">
-                <label for="login-email">電子郵件 (Email):</label>
-                <input type="email" id="login-email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="login-password">密碼:</label>
-                <input type="password" id="login-password" name="password" required>
-            </div>
-            <p class="forgot-password-toggle">
-                <a href="reset-password.html">忘記密碼？</a>
-            </p>
-            <button type="submit" class="submit-button">登入</button>
-            <p class="toggle-link">
-                還沒有帳號？ <a href="#" id="show-register-link">點此註冊</a>
-            </p>
-        </form>
+<div class="auth-container form-container">
+    <h1 id="page-title">登入</h1>
 
-        <form id="register-form" style="display: none;">
-            <div class="form-group">
-                <label for="reg-email">電子郵件 (Email):</label>
-                <input type="email" id="reg-email" name="email" required>
-            </div>
-            <div class="form-group verification-group">
-                <div class="input-wrapper">
-                    <label for="reg-code">電子郵件驗證碼:</label>
-                    <input type="text" id="reg-code" name="verificationCode" required>
-                </div>
-                <button type="button" id="send-code-btn" class="send-code-button">
-                    獲取驗證碼
-                </button>
-            </div>
-            <div class="form-group">
-                <label for="reg-password">密碼:</label>
-                <input type="password" id="reg-password" name="password" required>
-            </div>
-            <div class="form-group">
-                <label for="reg-name">姓名:</label>
-                <input type="text" id="reg-name" name="name" required>
-            </div>
-            <div class="form-group">
-                <label for="reg-phone">電話:</label>
-                <input type="tel" id="reg-phone" name="phone" pattern="09[0-9]{8}" placeholder="0912345678" required>
-            </div>
-            <div class="form-group">
-                <label for="reg-address">地址:</label>
-                <input type="text" id="reg-address" name="address" required>
-            </div>
-            <button type="submit" class="submit-button">註冊</button>
-            <p class="toggle-link">
-                已經有帳號了？ <a href="#" id="show-login-link">點此登入</a>
-            </p>
-        </form>
-
-        <a href="index.html" class="back-link">返回角色選擇</a>
+    <!-- 角色切換：買家 / 賣家 / 系統管理員 -->
+    <div class="role-tabs">
+        <button type="button" class="role-tab active" data-role="BUYER">買家</button>
+        <button type="button" class="role-tab" data-role="SELLER">賣家</button>
+        <button type="button" class="role-tab" data-role="ADMIN">系統管理員</button>
     </div>
+    <p class="role-hint" id="role-hint">
+        目前身分：買家（使用 Email 登入，可線上註冊）
+    </p>
+    <input type="hidden" id="selected-role" value="BUYER">
 
-    <script src="../js/login.js" defer></script>
+    <div id="message-container" class="message"></div>
+
+    <!-- 登入表單 -->
+    <form id="login-form">
+        <div class="form-group">
+            <label for="login-email" id="login-account-label">電子郵件 (Email):</label>
+            <!-- BUYER / SELLER 時 = Email；ADMIN 時 = 管理員編號 -->
+            <input type="text" id="login-email" name="account" required>
+        </div>
+        <div class="form-group">
+            <label for="login-password">密碼:</label>
+            <input type="password" id="login-password" name="password" required>
+        </div>
+        <p class="forgot-password-toggle">
+            <a href="reset-password.html">忘記密碼？</a>
+        </p>
+        <button type="submit" class="submit-button">登入</button>
+        <p class="toggle-link" id="login-to-register">
+            還沒有帳號？ <a href="#" id="show-register-link">點此註冊</a>
+        </p>
+    </form>
+
+    <!-- 註冊表單（只有 BUYER / SELLER 用） -->
+    <form id="register-form" style="display: none;">
+        <div class="form-group">
+            <label for="reg-email">電子郵件 (Email):</label>
+            <input type="email" id="reg-email" name="email" required>
+        </div>
+        <div class="form-group verification-group">
+            <div class="input-wrapper">
+                <label for="reg-code">電子郵件驗證碼:</label>
+                <input type="text" id="reg-code" name="verificationCode" required>
+            </div>
+            <button type="button" id="send-code-btn" class="send-code-button">
+                獲取驗證碼
+            </button>
+        </div>
+        <div class="form-group">
+            <label for="reg-password">密碼:</label>
+            <input type="password" id="reg-password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label for="reg-name">姓名:</label>
+            <input type="text" id="reg-name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="reg-phone">電話:</label>
+            <input type="tel" id="reg-phone" name="phone" pattern="09[0-9]{8}" placeholder="0912345678" required>
+        </div>
+        <div class="form-group">
+            <label for="reg-address">地址:</label>
+            <input type="text" id="reg-address" name="address" required>
+        </div>
+        <button type="submit" class="submit-button">註冊</button>
+        <p class="toggle-link">
+            已經有帳號了？ <a href="#" id="show-login-link">點此登入</a>
+        </p>
+    </form>
+
+    <a href="index.html" class="back-link">返回角色選擇</a>
+</div>
+
+<script src="../js/login.js" defer></script>
 </body>
 </html>
