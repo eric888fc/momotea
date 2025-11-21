@@ -1,6 +1,6 @@
 package demo.bigwork.controller;
 
-import jakarta.validation.Valid;
+import jakarta.validation.Valid; // 匯入 @Valid
 
 import java.util.Map;
 
@@ -25,18 +25,17 @@ import demo.bigwork.model.vo.ResetPasswordRequestVO;
 import demo.bigwork.service.UserService;
 import demo.bigwork.util.JwtUtil;
 
-@RestController
-@RequestMapping("/api/auth")
+@RestController // (關鍵) 告訴 Spring 這是一個回傳 JSON 的 Controller
+@RequestMapping("/api/auth") // (關鍵) 此 Controller 下的所有 API 都在 /api/auth 路徑下
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtUtil jwtUtil;
-    private final UserDAO userDAO;
+	private final UserService userService;
+	private final JwtUtil jwtUtil; // (關鍵) 注入 JwtUtil
+	private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-
-    @Autowired
+	@Autowired
     public AuthController(UserService userService,
                           JwtUtil jwtUtil,
                           UserDAO userDAO,

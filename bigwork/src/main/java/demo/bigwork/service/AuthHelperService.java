@@ -71,8 +71,7 @@ public class AuthHelperService {
         }
         return user;
     }
-    
-    // 新增：只有 ADMIN 才能呼叫的方法
+ // 新增：只有 ADMIN 才能呼叫的方法
     public UserPO getCurrentAuthenticatedAdmin() throws AccessDeniedException {
         UserPO user = getCurrentAuthenticatedUser();
 
