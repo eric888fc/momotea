@@ -27,9 +27,9 @@ DROP TABLE IF EXISTS `bank_accounts`;
 CREATE TABLE `bank_accounts` (
   `account_id` bigint NOT NULL AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
-  `bank_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行名稱',
-  `account_holder_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '戶名',
-  `account_number` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行帳號',
+  `bank_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行名稱',
+  `account_holder_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '戶名',
+  `account_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '銀行帳號',
   PRIMARY KEY (`account_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`) COMMENT '確保一個 User 只有一個帳戶 (一對一)',
   KEY `fk_bank_accounts_users_idx` (`user_id`),
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-14 17:31:33
+-- Dump completed on 2025-11-21 16:15:17

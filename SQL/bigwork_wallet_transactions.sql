@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `wallet_transactions`;
 CREATE TABLE `wallet_transactions` (
   `tx_id` bigint NOT NULL AUTO_INCREMENT COMMENT '交易 ID',
   `wallet_id` bigint NOT NULL COMMENT '哪個錢包',
-  `type` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '交易類型 (TOPUP, WITHDRAWAL, PURCHASE)',
+  `type` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '交易類型 (TOPUP, WITHDRAWAL, PURCHASE)',
   `amount` decimal(10,2) NOT NULL COMMENT '交易金額 (正數為入帳, 負數為出帳)',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '交易時間',
   PRIMARY KEY (`tx_id`),
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-14 17:31:34
+-- Dump completed on 2025-11-21 16:15:17

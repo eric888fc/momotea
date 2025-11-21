@@ -31,7 +31,7 @@ CREATE TABLE `wallets` (
   PRIMARY KEY (`wallet_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`) COMMENT '一對一關聯',
   CONSTRAINT `fk_wallets_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='使用者模擬錢包';
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='使用者模擬錢包';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `wallets` (
 
 LOCK TABLES `wallets` WRITE;
 /*!40000 ALTER TABLE `wallets` DISABLE KEYS */;
-INSERT INTO `wallets` VALUES (1,4,17620.00),(2,3,13202.00),(7,9,390.00),(8,10,9790.00),(9,11,10930.00),(14,16,60.00);
+INSERT INTO `wallets` VALUES (1,4,17620.00),(2,3,13202.00),(7,9,390.00),(8,10,9790.00),(9,11,10930.00),(14,16,60.00),(15,18,10000.00);
 /*!40000 ALTER TABLE `wallets` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-14 17:31:34
+-- Dump completed on 2025-11-21 16:15:17

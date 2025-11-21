@@ -26,7 +26,7 @@ DROP TABLE IF EXISTS `password_reset_tokens`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `password_reset_tokens` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `token` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` bigint NOT NULL,
   `expiry_date` timestamp NOT NULL,
   PRIMARY KEY (`id`),
@@ -55,4 +55,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-14 17:31:33
+-- Dump completed on 2025-11-21 16:15:17

@@ -30,7 +30,7 @@ CREATE TABLE `product_ratings` (
   `buyer_id` bigint NOT NULL COMMENT '評價的買家 (FK to users)',
   `order_item_id` bigint NOT NULL COMMENT '基於哪一筆訂單明細 (FK to order_items)',
   `rating_stars` int NOT NULL COMMENT '評分 (例如 1-5)',
-  `comment` text COLLATE utf8mb4_unicode_ci COMMENT '評論內容',
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT '評論內容',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`rating_id`),
   UNIQUE KEY `order_item_id_UNIQUE` (`order_item_id`) COMMENT '一個訂單項目只能評價一次',
@@ -61,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-14 17:31:33
+-- Dump completed on 2025-11-21 16:15:17
