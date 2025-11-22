@@ -6,6 +6,11 @@ import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.DayOfWeek;
+import java.time.Month;
 
 /**
  * 財務報表 VO：本期 vs 上期（周 / 季）
@@ -50,4 +55,9 @@ public class FinancialReportVO {
 
     /** 訂單數成長率（百分比，單位 %，可能為負） */
     private BigDecimal orderCountGrowthRate;
+    
+
+    private int currentOrders;
+    private int previousOrders;
+
 }

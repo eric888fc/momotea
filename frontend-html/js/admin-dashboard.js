@@ -4,10 +4,12 @@
 const $ = id => document.getElementById(id);
 const apiBase = "http://localhost:8080";
 
-const token = localStorage.getItem("authToken");
-const role = localStorage.getItem("userRole");
-const adminCode = localStorage.getItem("adminCode");
+// (修正) 這裡要改成跟 login.js 一樣的 Key ('token' 和 'role')
+const token = localStorage.getItem("token");      // 原本是 "authToken"
+const role = localStorage.getItem("role");        // 原本是 "userRole"
+const adminCode = localStorage.getItem("adminCode"); // 這個沒變
 
+// (驗證)
 if (!token || role !== "ADMIN") {
     alert("請先以系統管理員身分登入");
     location.href = "login.html";
@@ -15,7 +17,8 @@ if (!token || role !== "ADMIN") {
 $("adminCodeDisplay").textContent = adminCode || "-";
 
 $("logoutBtn").onclick = () => {
-    ["authToken", "userRole", "userName", "adminCode"].forEach(k => localStorage.removeItem(k));
+    // (修正) 登出時也要清除正確的 Key
+    ["token", "role", "userName", "adminCode"].forEach(k => localStorage.removeItem(k));
     location.href = "login.html";
 };
 

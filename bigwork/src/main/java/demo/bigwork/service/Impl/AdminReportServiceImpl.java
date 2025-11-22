@@ -3,7 +3,9 @@ package demo.bigwork.service.Impl;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,7 +93,7 @@ public class AdminReportServiceImpl implements AdminReportService {
         AdminReportVO vo = new AdminReportVO();
         vo.setStartDate(startDate);
         vo.setEndDate(endDate);
-        vo.setTotalOrderCount(totalOrderCount);
+        vo.setTotalOrderCount((int) totalOrderCount);
         vo.setTotalOrderAmount(totalAmount);
         vo.setAverageOrderAmount(averageOrderAmount);
         vo.setSmallOrderCount(smallOrderCount);
@@ -110,67 +112,141 @@ public class AdminReportServiceImpl implements AdminReportService {
      * period = "weekly" 或 "quarterly"
      */
     @Override
-    public FinancialReportVO generateFinancialReport(LocalDate startDate,
-                                                     LocalDate endDate,
-                                                     String period) {
+    public FinancialReportVO generateFinancialReport(String period) {
 
-        // 本期：直接用上面的 generateReport
-        AdminReportVO current = generateReport(startDate, endDate);
 
-        // 上一期：依 weekly / quarterly 回推一段時間
-        LocalDate prevStart;
-        LocalDate prevEnd;
+
+        // === 1. 計算「本期」起訖日期 ===
+        LocalDate today = LocalDate.now();
+        LocalDate currentStartDate;
+        LocalDate currentEndDate;
 
         if ("weekly".equalsIgnoreCase(period)) {
-            prevStart = startDate.minusWeeks(1);
-            prevEnd   = endDate.minusWeeks(1);
-        } else { // quarterly
-            prevStart = startDate.minusMonths(3);
-            prevEnd   = endDate.minusMonths(3);
+            // 本週：週一 ~ 週日
+            currentStartDate = today.with(DayOfWeek.MONDAY);
+            currentEndDate   = today.with(DayOfWeek.SUNDAY);
+        } else if ("quarterly".equalsIgnoreCase(period)) {
+            // 本季：1–3、4–6、7–9、10–12
+            int quarterIndex = (today.getMonthValue() - 1) / 3;   // 0,1,2,3
+            Month firstMonth = Month.of(quarterIndex * 3 + 1);    // 1,4,7,10
+
+            currentStartDate = LocalDate.of(today.getYear(), firstMonth, 1);
+            currentEndDate   = currentStartDate.plusMonths(3).minusDays(1);
+        } else {
+            throw new IllegalArgumentException("period 必須為 weekly 或 quarterly");
         }
 
-        AdminReportVO previous = generateReport(prevStart, prevEnd);
+        // === 2. 本期報表（使用你原本的 generateReport） ===
+        AdminReportVO current = generateReport(currentStartDate, currentEndDate);
 
-        BigDecimal curRevenue = current.getTotalOrderAmount();
-        BigDecimal prevRevenue = previous.getTotalOrderAmount();
-        if (curRevenue == null) curRevenue = BigDecimal.ZERO;
-        if (prevRevenue == null) prevRevenue = BigDecimal.ZERO;
+        // === 3. 上期起訖日期 ===
+        LocalDate previousStartDate;
+        LocalDate previousEndDate;
 
-        BigDecimal revDiff = curRevenue.subtract(prevRevenue);
-        BigDecimal revGrowth = BigDecimal.ZERO;
-        if (prevRevenue.compareTo(BigDecimal.ZERO) != 0) {
-            revGrowth = revDiff
-                    .divide(prevRevenue, 4, RoundingMode.HALF_UP)
-                    .multiply(BigDecimal.valueOf(100))
-                    .setScale(2, RoundingMode.HALF_UP);
+        if ("weekly".equalsIgnoreCase(period)) {
+            // 上一週
+            previousStartDate = currentStartDate.minusWeeks(1);
+            previousEndDate   = currentEndDate.minusWeeks(1);
+        } else {
+            // 上一季
+            previousStartDate = currentStartDate.minusMonths(3);
+            previousEndDate   = currentEndDate.minusMonths(3);
         }
 
-        long curCnt = current.getTotalOrderCount();
-        long prevCnt = previous.getTotalOrderCount();
-        long cntDiff = curCnt - prevCnt;
-        BigDecimal cntGrowth = BigDecimal.ZERO;
-        if (prevCnt > 0) {
-            cntGrowth = BigDecimal.valueOf(cntDiff * 100.0 / prevCnt)
-                    .setScale(2, RoundingMode.HALF_UP);
-        }
+        // === 4. 上期報表 ===
+        AdminReportVO previous = generateReport(previousStartDate, previousEndDate);
 
+        // === 5. 組成 FinancialReportVO（完全照你給的 VO 欄位） ===
         FinancialReportVO vo = new FinancialReportVO();
-        vo.setCurrentStartDate(startDate);
-        vo.setCurrentEndDate(endDate);
-        vo.setPreviousStartDate(prevStart);
-        vo.setPreviousEndDate(prevEnd);
 
-        vo.setCurrentRevenue(curRevenue);
-        vo.setPreviousRevenue(prevRevenue);
-        vo.setRevenueDiff(revDiff);
-        vo.setRevenueGrowthRate(revGrowth);
 
-        vo.setCurrentOrderCount(curCnt);
-        vo.setPreviousOrderCount(prevCnt);
-        vo.setOrderCountDiff(cntDiff);
-        vo.setOrderCountGrowthRate(cntGrowth);
+
+        // 日期
+        vo.setCurrentStartDate(currentStartDate);
+        vo.setCurrentEndDate(currentEndDate);
+        vo.setPreviousStartDate(previousStartDate);
+        vo.setPreviousEndDate(previousEndDate);
+
+        // 避免 null
+        BigDecimal currentRevenue  = current.getTotalOrderAmount()  != null
+                ? current.getTotalOrderAmount()
+                : BigDecimal.ZERO;
+        BigDecimal previousRevenue = previous.getTotalOrderAmount() != null
+                ? previous.getTotalOrderAmount()
+                : BigDecimal.ZERO;
+
+        vo.setCurrentRevenue(currentRevenue);
+        vo.setPreviousRevenue(previousRevenue);
+
+        // 營收差額
+        BigDecimal revenueDiff = currentRevenue.subtract(previousRevenue);
+        vo.setRevenueDiff(revenueDiff);
+
+        // 營收成長率 (%)
+        if (previousRevenue.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal revenueGrowthRate = revenueDiff
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(previousRevenue, 2, RoundingMode.HALF_UP);
+            vo.setRevenueGrowthRate(revenueGrowthRate);
+        } else {
+            vo.setRevenueGrowthRate(BigDecimal.ZERO);
+        }
+
+        // 訂單數（用 AdminReportVO 的 totalOrderCount）
+        long currentOrderCount  = current.getTotalOrderCount();
+        long previousOrderCount = previous.getTotalOrderCount();
+
+
+
+
+
+
+        vo.setCurrentOrderCount(currentOrderCount);
+        vo.setPreviousOrderCount(previousOrderCount);
+
+        long orderCountDiff = currentOrderCount - previousOrderCount;
+        vo.setOrderCountDiff(orderCountDiff);
+
+        // 訂單數成長率 (%)
+        if (previousOrderCount > 0) {
+            BigDecimal orderCountGrowthRate = BigDecimal.valueOf(orderCountDiff)
+                    .multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(previousOrderCount), 2, RoundingMode.HALF_UP);
+            vo.setOrderCountGrowthRate(orderCountGrowthRate);
+        } else {
+            vo.setOrderCountGrowthRate(BigDecimal.ZERO);
+        }
+
+        // 你 VO 裡還有 currentOrders / previousOrders 兩個 int 欄位，一併設定
+        vo.setCurrentOrders((int) currentOrderCount);
+        vo.setPreviousOrders((int) previousOrderCount);
+
 
         return vo;
     }
-}
+    
+    @Override
+    public AdminReportVO generateReportForCurrentWeek() {
+        LocalDate today = LocalDate.now();
 
+        // 以「本週一 ~ 本週日」為範圍
+        LocalDate start = today.with(DayOfWeek.MONDAY);
+        LocalDate end   = today.with(DayOfWeek.SUNDAY);
+
+        return generateReport(start, end);
+    }
+
+    @Override
+    public AdminReportVO generateReportForCurrentQuarter() {
+        LocalDate today = LocalDate.now();
+
+        // 算出本季的第一個月：1、4、7、10
+        int quarterIndex = (today.getMonthValue() - 1) / 3; // 0,1,2,3
+        Month firstMonthOfQuarter = Month.of(quarterIndex * 3 + 1);
+
+        LocalDate start = LocalDate.of(today.getYear(), firstMonthOfQuarter, 1);
+        LocalDate end   = start.plusMonths(3).minusDays(1); // 該季最後一天
+
+        return generateReport(start, end);
+    }
+}
