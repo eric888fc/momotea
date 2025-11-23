@@ -35,7 +35,7 @@ CREATE TABLE `order_items` (
   KEY `fk_order_items_product_idx` (`product_id`),
   CONSTRAINT `fk_order_items_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_order_items_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='訂單明細 (商品快照)';
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='訂單明細 (商品快照)';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,7 +44,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (1,1,NULL,10,99.99),(2,1,3,10,88.00),(3,2,5,4,30.00),(4,3,5,13,30.00),(5,3,4,20,50.00),(6,4,5,2,30.00),(7,4,3,2,88.00),(8,5,5,1,30.00),(9,6,6,5,30.00),(10,7,3,2,88.00),(11,8,6,3,30.00),(12,9,3,1,88.00),(13,10,6,1,30.00),(14,11,6,4,30.00),(15,12,9,5,10.00),(16,12,5,4,30.00),(17,13,10,3,20.00),(18,14,9,3,10.00),(19,15,6,3,30.00),(20,15,8,4,60.00),(21,16,12,5,40.00),(22,17,9,3,10.00),(23,18,7,3,30.00),(24,19,12,3,40.00);
+INSERT INTO `order_items` VALUES (1,1,NULL,10,99.99),(2,1,3,10,88.00),(3,2,5,4,30.00),(4,3,5,13,30.00),(5,3,4,20,50.00),(6,4,5,2,30.00),(7,4,3,2,88.00),(8,5,5,1,30.00),(9,6,6,5,30.00),(10,7,3,2,88.00),(11,8,6,3,30.00),(12,9,3,1,88.00),(13,10,6,1,30.00),(14,11,6,4,30.00),(15,12,9,5,10.00),(16,12,5,4,30.00),(17,13,10,3,20.00),(18,14,9,3,10.00),(19,15,6,3,30.00),(20,15,8,4,60.00),(21,16,12,5,40.00),(22,17,9,3,10.00),(23,18,7,3,30.00),(24,19,12,3,40.00),(25,20,13,3,20.00),(26,21,9,5,10.00),(27,22,11,2,100.00);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -57,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-22 21:52:00
+-- Dump completed on 2025-11-24  0:25:35

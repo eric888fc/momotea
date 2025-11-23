@@ -39,7 +39,7 @@ CREATE TABLE `product_ratings` (
   CONSTRAINT `fk_ratings_buyer` FOREIGN KEY (`buyer_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_ratings_order_item` FOREIGN KEY (`order_item_id`) REFERENCES `order_items` (`order_item_id`) ON DELETE CASCADE,
   CONSTRAINT `fk_ratings_product` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品評價';
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='商品評價';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,7 +48,7 @@ CREATE TABLE `product_ratings` (
 
 LOCK TABLES `product_ratings` WRITE;
 /*!40000 ALTER TABLE `product_ratings` DISABLE KEYS */;
-INSERT INTO `product_ratings` VALUES (2,3,4,2,1,'這個商品太爛了！','2025-11-06 07:22:06'),(4,6,4,11,2,'難喝','2025-11-12 09:24:42'),(5,6,10,14,5,'太贊了!!','2025-11-12 09:33:19'),(6,4,4,5,5,'777777777777','2025-11-13 02:36:43'),(7,5,4,4,2,'非常難吃\n','2025-11-13 02:37:01'),(8,5,4,3,5,'11111','2025-11-13 02:37:20'),(9,9,11,15,1,'很爛的箱子','2025-11-14 07:17:08'),(10,5,11,16,4,'good!','2025-11-14 07:17:35'),(11,6,4,13,5,'非常好喝','2025-11-17 07:05:25');
+INSERT INTO `product_ratings` VALUES (2,3,4,2,1,'這個商品太爛了！','2025-11-06 07:22:06'),(4,6,4,11,2,'難喝','2025-11-12 09:24:42'),(5,6,10,14,5,'太贊了!!','2025-11-12 09:33:19'),(6,4,4,5,5,'777777777777','2025-11-13 02:36:43'),(7,5,4,4,2,'非常難吃\n','2025-11-13 02:37:01'),(8,5,4,3,5,'11111','2025-11-13 02:37:20'),(9,9,11,15,1,'很爛的箱子','2025-11-14 07:17:08'),(10,5,11,16,4,'good!','2025-11-14 07:17:35'),(11,6,4,13,5,'非常好喝','2025-11-17 07:05:25'),(12,9,4,26,5,'555','2025-11-23 13:50:42');
 /*!40000 ALTER TABLE `product_ratings` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -61,4 +61,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-22 21:52:00
+-- Dump completed on 2025-11-24  0:25:35

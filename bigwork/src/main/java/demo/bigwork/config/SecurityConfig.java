@@ -110,6 +110,8 @@ public class SecurityConfig {
 
 				// 2. (關鍵) 設定「授權 (Authorization)」規則
 				.authorizeHttpRequests(authz -> authz
+						.requestMatchers("/createOrder").permitAll()
+						.requestMatchers("/notify").permitAll()
 						// (重要) 放行所有 /api/auth/** 的請求 (註冊, 登入, 忘記密碼...)
 						.requestMatchers("/api/auth/**").permitAll()
 						// 告訴 Spring Security，「所有」 /uploads/ 路徑下的請求 (圖片)

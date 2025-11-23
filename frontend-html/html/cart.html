@@ -11,28 +11,28 @@
 </head>
 <body>
     
-<nav class="navbar">
-    <div class="nav-container">
-        
-        <div class="nav-group-left">
-            <a href="products.html" class="nav-brand">歡迎光臨 E-Shop</a>
+    <nav class="navbar">
+        <div class="nav-container">
+            
+            <div class="nav-group-left">
+                <a href="products.html" class="nav-brand">歡迎光臨 E-Shop</a>
+            </div>
+            
+            <div class="nav-group-center">
+                <a href="products.html" class="nav-link">商城首頁</a>
+                <a href="orders.html" class="nav-link">我的訂單</a> 
+                <a href="buyer-profile.html" class="nav-link">個人資料</a> 
+            </div>
+            
+            <div class="nav-group-right nav-links">
+                <span id="user-email" class="nav-user">載入中...</span>
+                <a href="cart.html" id="cart-btn" class="nav-link-cart active">🛒 購物車</a> 
+                <a href="#" id="logout-btn" class="nav-link-button">登出</a>
+            </div>
+            
         </div>
-
-        <div class="nav-group-center">
-            <a href="products.html" class="nav-link">商城首頁</a>
-            <a href="orders.html" class="nav-link">我的訂單</a> 
-            <a href="buyer-profile.html" class="nav-link">個人資料</a> 
-        </div>
-        
-        <div class="nav-group-right nav-links">
-            <span id="user-email" class="nav-user">載入中...</span>
-            <a href="cart.html" id="cart-btn" class="nav-link-cart active">🛒 購物車</a> 
-            <a href="#" id="logout-btn" class="nav-link-button">登出</a>
-        </div>
-        
-    </div>
-</nav>
-
+    </nav>
+    
     <div class="dashboard-container">
         <div id="message-container" class="message"></div>
         
@@ -45,7 +45,7 @@
                     <p>購物車載入中...</p>
                 </div>
             </div>
-
+            
             <div class="cart-summary-section">
                 <div class="summary-card">
                     <h2>訂單摘要</h2>
@@ -60,7 +60,7 @@
                             儲值 / Top Up
                         </button>
                     </div>
-
+                    
                     <div class="summary-line">
                         <span>商品總金額：</span>
                         <span id="subtotal-amount" class="summary-value">TWD $0</span>
@@ -76,12 +76,17 @@
                     <button id="checkout-btn" class="button-primary" disabled>
                         結帳 ($0.00)
                     </button>
+                    
+                    <h1>多元支付</h1>
+                    <form action="http://localhost:8080/createOrder" method="get">
+                        <button type="submit" class="button-secondary">前往第三方付款 (ECPay)</button>
+                    </form>
                     <button id="clear-cart-btn" class="button-secondary">
                         清空購物車
                     </button>
                 </div>
             </div>
-
+            
         </div> 
     </div> 
     
