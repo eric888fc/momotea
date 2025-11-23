@@ -1,15 +1,6 @@
 package demo.bigwork.dao;
 
-import java.sql.Timestamp;
-import java.util.Optional;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
-
-import demo.bigwork.model.enums.UserRole;
-import demo.bigwork.model.po.UserPO;
+import org.springframework.data.jpa.repository.JpaRepository; // 匯入 Spring Data JPA
 import org.springframework.stereotype.Repository; // 標記為 Spring Bean
 
 import demo.bigwork.model.po.UserPO;
@@ -71,16 +62,7 @@ public interface UserDAO extends JpaRepository<UserPO, Long> {
      */
     boolean existsByEmail(String email);
     
-    Optional<UserPO> findByAdminCode(String adminCode);
-
-    /** 指定期間某角色的新會員數 */
-    @Query("SELECT COALESCE(COUNT(u), 0) " +
-           "FROM UserPO u " +
-           "WHERE u.createdAt >= :start " +
-           "  AND u.createdAt < :end " +
-           "  AND u.role = :role")
-    long countNewUsersByRoleBetween(
-            @Param("start") Timestamp start,
-            @Param("end") Timestamp end,
-            @Param("role") UserRole role);
+    // 你可以繼續新增，例如：
+    // List<UserPO> findByName(String name); // 查詢所有同名同姓的人
+    // List<UserPO> findByCreatedAtAfter(Timestamp time); // 查詢某個時間點後註冊的人
 }

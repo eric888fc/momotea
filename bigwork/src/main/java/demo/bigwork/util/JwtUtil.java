@@ -2,6 +2,7 @@ package demo.bigwork.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,6 +72,19 @@ public class JwtUtil {
         String subject = userPO.getEmail();
         
         return createToken(claims, subject);
+    }
+
+    /**
+     * (最重要) 生成 Token
+     * (我們將在 UserServiceImpl 的 login 方法中呼叫它)
+     */
+    public String generateToken(UserDetails userDetails) {
+        // (教授提醒) 我們可以在 Token 中塞入額外資訊 (e.g., 角色)
+        // 這會讓未來「授權 (Authorization)」更方便
+        Map<String, Object> claims = new HashMap<>();
+        // (例如: claims.put("role", ...))
+        
+        return createToken(claims, userDetails.getUsername());
     }
 
     // --- 以下為輔助方法 ---

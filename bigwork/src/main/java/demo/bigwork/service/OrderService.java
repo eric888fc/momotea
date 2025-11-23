@@ -36,5 +36,16 @@ public interface OrderService {
 	OrderResponseVO getMyOrderDetails(Long orderId) throws AccessDeniedException, EntityNotFoundException;
 
 	List<OrderResponseVO> getMyOrdersAsSeller() throws AccessDeniedException;
+	
+	/**
+	 * 根據第三方訂單交易編號查詢訂單資訊（含商品明細）
+	 * @param merchantTradeNo 商家交易編號
+	 * @return 訂單完整資訊VO
+	 * @throws EntityNotFoundException 如果查無資料
+	 */
+	//OrderResponseVO findOrderByTradeNo(String merchantTradeNo) throws EntityNotFoundException;
+	//OrderResponseVO updateStatusPaid(String merchantTradeNo) throws EntityNotFoundException;
+
+	
 
 }

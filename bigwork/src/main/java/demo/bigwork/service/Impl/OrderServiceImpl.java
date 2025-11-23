@@ -294,4 +294,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(OrderResponseVO::new) // (在交易內安全轉換)
                 .collect(Collectors.toList());
     }
+
+
+	
 }

@@ -79,13 +79,6 @@ public class UserPO {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, length = 20)
     private UserRole role;
-    
-    /**
-     * 管理員原編（管理員編號）
-     * 只有 role = ADMIN 才會有值，其它角色可以是 null
-     */
-    @Column(name = "admin_code", length = 50, unique = true)
-    private String adminCode;
 
     /**
      * @Column(name = "phone", length = 20)

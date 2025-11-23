@@ -6,6 +6,5 @@ package demo.bigwork.model.enums;
  */
 public enum UserRole {
     BUYER,  // 買家
-    SELLER, // 賣家
-    ADMIN  // 系統管理員
+    SELLER // 賣家
 }
