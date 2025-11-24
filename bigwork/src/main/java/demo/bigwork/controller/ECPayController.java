@@ -1,38 +1,25 @@
 package demo.bigwork.controller;
 
-<<<<<<< HEAD
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-=======
-import java.text.SimpleDateFormat; // (新增) 用於格式化時間
-import java.util.*;
-
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-<<<<<<< HEAD
 import demo.bigwork.dao.CartDAO;
 import demo.bigwork.model.po.CartPO;
 import demo.bigwork.model.po.UserPO;
 import demo.bigwork.service.AuthHelperService;
-=======
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 import demo.bigwork.util.ECPayUtil;
 
 @RestController
 public class ECPayController {
 
-<<<<<<< HEAD
     @Value("${ecpay.merchantId}")
-=======
-	@Value("${ecpay.merchantId}")
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
     private String merchantId;
 
     @Value("${ecpay.hashKey}")
@@ -43,7 +30,6 @@ public class ECPayController {
 
     @Value("${ecpay.serviceUrl}")
     private String serviceUrl;
-<<<<<<< HEAD
     
     @Value("${ecpay.client.back.url}") 
     private String clientBackUrl; 
@@ -94,22 +80,11 @@ public class ECPayController {
         // --- 準備綠界參數 ---
 
         String tradeNo = "TOSN" + System.currentTimeMillis(); 
-=======
-
-    @GetMapping("/createOrder")
-    public String createOrder() throws Exception {
-        // (修改 1) 動態產生不重複的訂單編號 (使用當前時間毫秒數)
-        // 例如：TOSN1732180000123
-        String tradeNo = "TOSN" + System.currentTimeMillis(); 
-        
-        // (修改 2) 動態產生當前交易時間 (格式必須為 yyyy/MM/dd HH:mm:ss)
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String tradeDate = sdf.format(new Date());
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("MerchantID", merchantId);
-<<<<<<< HEAD
         params.put("MerchantTradeNo", tradeNo);
         params.put("MerchantTradeDate", tradeDate);
         params.put("PaymentType", "aio");
@@ -134,42 +109,15 @@ public class ECPayController {
         params.put("CheckMacValue", checkMacValue);
 
         // 產生 HTML Form
-=======
-        
-        // (修改 3) 將變數填入，取代原本寫死的字串
-        params.put("MerchantTradeNo", tradeNo); 
-        params.put("MerchantTradeDate", tradeDate);
-        
-        params.put("PaymentType", "aio");
-        params.put("TotalAmount", "199");
-        params.put("TradeDesc", "測試交易");
-        params.put("ChoosePayment", "ALL");
-        params.put("ItemName", "商品一#商品二");
-        params.put("ReturnURL", "http://localhost:8080/notify");
-
-        // 計算 CheckMacValue
-        String checkMacValue = ECPayUtil.genCheckMacValue(params, hashKey, hashIV);
-        params.put("CheckMacValue", checkMacValue);
-
-        // 產生 HTML form
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
         StringBuilder form = new StringBuilder();
         form.append("<form id='ecpay' method='post' action='").append(serviceUrl).append("'>");
         for (Map.Entry<String, String> entry : params.entrySet()) {
             form.append("<input type='hidden' name='").append(entry.getKey())
                 .append("' value='").append(entry.getValue()).append("'/>");
         }
-<<<<<<< HEAD
-=======
-        form.append("<input type='submit' value='送出付款'/>");
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
         form.append("</form>");
         form.append("<script>document.getElementById('ecpay').submit();</script>");
 
         return form.toString();
     }
-<<<<<<< HEAD
-=======
-
->>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 }
