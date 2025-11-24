@@ -109,11 +109,16 @@ public class SecurityConfig {
 				.csrf(csrf -> csrf.disable())
 				// 2. (關鍵) 設定「授權 (Authorization)」規則
 				.authorizeHttpRequests(authz -> authz
+<<<<<<< HEAD
 						// (修正後的寫法)
 						// 1. 給綠界伺服器用的 (沒 Token，必須開放)
 						.requestMatchers("/api/wallet/ecpay/callback", "/notify").permitAll()
 						// 2. 給前端用的 API (createOrder 需要登入才能抓購物車)
 						.requestMatchers("/createOrder").authenticated() // <--- 改成這樣
+=======
+						.requestMatchers("/createOrder").permitAll()
+						.requestMatchers("/notify").permitAll()
+>>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 						// (重要) 放行所有 /api/auth/** 的請求 (註冊, 登入, 忘記密碼...)
 						.requestMatchers("/api/auth/**").permitAll()
 						// 告訴 Spring Security，「所有」 /uploads/ 路徑下的請求 (圖片)

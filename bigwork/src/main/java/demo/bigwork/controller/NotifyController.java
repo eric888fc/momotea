@@ -1,30 +1,43 @@
 package demo.bigwork.controller;
 
+<<<<<<< HEAD
 import demo.bigwork.service.OrderService; // (1) 匯入 OrderService
 import demo.bigwork.util.ECPayUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+=======
+import demo.bigwork.util.ECPayUtil;
+import jakarta.servlet.http.HttpServletRequest;
+>>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+<<<<<<< HEAD
 import java.math.BigDecimal;
+=======
+>>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
 import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class NotifyController {
 
+<<<<<<< HEAD
     private static final Logger logger = LoggerFactory.getLogger(NotifyController.class);
 
     @Value("${ecpay.hashKey}")
+=======
+	@Value("${ecpay.hashKey}")
+>>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
     private String hashKey;
 
     @Value("${ecpay.hashIV}")
     private String hashIV;
 
+<<<<<<< HEAD
     // (2) 注入 OrderService，用來處理結帳邏輯
     private final OrderService orderService;
 
@@ -85,3 +98,24 @@ public class NotifyController {
         }
     }
 }
+=======
+    @PostMapping("/notify")
+    public String receiveNotify(HttpServletRequest request) {
+        Map<String, String> params = new HashMap<>();
+        request.getParameterMap().forEach((k, v) -> params.put(k, v[0]));
+
+        boolean isValid = ECPayUtil.checkMacValue(params, hashKey, hashIV);
+
+        if (isValid) {
+            String merchantTradeNo = params.get("MerchantTradeNo");
+            String rtnCode = params.get("RtnCode"); // 1 表示付款成功
+            System.out.println("訂單編號: " + merchantTradeNo + " 狀態: " + rtnCode);
+
+            // TODO: 更新訂單狀態 (已付款)
+            return "1|OK";
+        } else {
+            return "0|Error";
+        }
+    }
+}
+>>>>>>> 6323878df637fcec51403b0fda58001a3d440cbb
