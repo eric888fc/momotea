@@ -214,10 +214,12 @@
     * 點擊「註冊」並分別建立一個 `BUYER` 和一個 `SELLER` 帳號即可開始測試所有功能。
 
 ### 3. Ngrok(先安裝ngrok.exe):
-請按照以下步驟操作，只需 3 分鐘：
 
 1. **開啟Ngrok:**
 輸入:'ngrok http --domain=gayla-unbriefed-unreluctantly.ngrok-free.dev 8080'
+
+<img width="965" height="512" alt="image" src="https://github.com/user-attachments/assets/47617845-a9d4-4cd1-979f-8a93da773752" />
+
 
 注意：每次測試都要讓Ngrok保持開啟狀態，不然後端收不到綠界回傳的資料。
 ---
