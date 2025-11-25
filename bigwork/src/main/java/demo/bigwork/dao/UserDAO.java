@@ -71,6 +71,7 @@ public interface UserDAO extends JpaRepository<UserPO, Long> {
      */
     boolean existsByEmail(String email);
     
+    
     Optional<UserPO> findByAdminCode(String adminCode);
 
     /** 指定期間某角色的新會員數 */

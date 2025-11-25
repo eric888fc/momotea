@@ -1,6 +1,6 @@
 package demo.bigwork.controller;
 
-import jakarta.validation.Valid; // 匯入 @Valid
+import jakarta.validation.Valid;
 
 import java.util.Map;
 
@@ -23,25 +23,26 @@ import demo.bigwork.model.vo.LoginRequestVO;
 import demo.bigwork.model.vo.RegisterRequestVO;
 import demo.bigwork.model.vo.ResetPasswordRequestVO;
 import demo.bigwork.service.UserService;
-import demo.bigwork.util.JwtUtil;
+import demo.bigwork.service.JwtService;
 
-@RestController // (關鍵) 告訴 Spring 這是一個回傳 JSON 的 Controller
-@RequestMapping("/api/auth") // (關鍵) 此 Controller 下的所有 API 都在 /api/auth 路徑下
+@RestController
+@RequestMapping("/api/auth")
 public class AuthController {
 
-	private final UserService userService;
-	private final JwtUtil jwtUtil; // (關鍵) 注入 JwtUtil
-	private final UserDAO userDAO;
+    private final UserService userService;
+    private final JwtService jwtService;
+    private final UserDAO userDAO;
     private final PasswordEncoder passwordEncoder;
-	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-	@Autowired
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
+    @Autowired
     public AuthController(UserService userService,
-                          JwtUtil jwtUtil,
+                          JwtService jwtService,
                           UserDAO userDAO,
                           PasswordEncoder passwordEncoder) {
         this.userService = userService;
-        this.jwtUtil = jwtUtil;
+        this.jwtService = jwtService;
         this.userDAO = userDAO;
         this.passwordEncoder = passwordEncoder;
     }
@@ -92,6 +93,42 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String code = request.get("code");
+
+        if (email == null || !email.contains("@") || code == null || code.isEmpty()) {
+            return ResponseEntity.badRequest().body("Email 或驗證碼格式錯誤");
+        }
+
+        try {
+            userService.verifyEmail(email, code);
+            return ResponseEntity.ok("Email 驗證成功");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-code")
+    public ResponseEntity<?> resendVerificationCode(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        if (email == null || !email.contains("@")) {
+            return ResponseEntity.badRequest().body("Email 格式錯誤");
+        }
+
+        try {
+            // 這裡改成呼叫原本就有的 sendVerificationCode
+            userService.sendVerificationCode(email);
+            return ResponseEntity.ok("新的驗證碼已發送至: " + email);
+        } catch (EmailAlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            logger.error("重新發送驗證碼失敗", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("重新發送驗證碼失敗，請稍後再試");
+        }
+    }
+
     // ========== 一般登入 (BUYER / SELLER) ==========
 
     /**
@@ -103,8 +140,8 @@ public class AuthController {
             // 1. 呼叫 Service 驗證帳號密碼
             UserPO user = userService.login(requestVO);
 
-            // 2. 產生 JWT Token
-            String token = jwtUtil.generateToken(user);
+            // 2. 產生 JWT Token（統一由 JwtService 處理）
+            String token = jwtService.generateToken(user);
 
             // 3. 回傳包含 token + adminCode 的資訊
             return ResponseEntity.ok(
@@ -133,36 +170,41 @@ public class AuthController {
     @PostMapping("/admin-login")
     public ResponseEntity<?> adminLogin(@Valid @RequestBody AdminLoginRequestVO requestVO) {
         try {
-            UserPO user = userDAO.findByAdminCode(requestVO.getAdminCode())
-                    .orElseThrow(() -> new BadCredentialsException("管理員編號不存在"));
+            // 1. 用 adminCode 找出管理員
+            UserPO admin = userDAO.findByAdminCode(requestVO.getAdminCode())
+                    .orElseThrow(() -> new BadCredentialsException("管理員編號錯誤"));
 
-            if (user.getRole() != UserRole.ADMIN) {
-                throw new BadCredentialsException("此帳號不是系統管理員");
+
+
+
+            // 2. 比對密碼
+            if (!passwordEncoder.matches(requestVO.getPassword(), admin.getPassword())) {
+                throw new BadCredentialsException("管理員密碼錯誤");
             }
 
-            if (!passwordEncoder.matches(requestVO.getPassword(), user.getPassword())) {
-                throw new BadCredentialsException("管理員編號或密碼錯誤");
-            }
+            // 3. 產生 JWT：subject 一律用 Email，並由 JwtService 統一處理
+            String token = jwtService.generateToken(admin);
 
-            String token = jwtUtil.generateToken(user);
-
-            AuthResponseVO vo = new AuthResponseVO(
-                    "管理員登入成功",
-                    user.getUserId(),
-                    user.getName(),
-                    user.getEmail(),
-                    user.getRole(),
+            // 4. 回傳給前端（共用 AuthResponseVO）
+            AuthResponseVO resp = new AuthResponseVO(
+                    "登入成功",
+                    admin.getUserId(),
+                    admin.getName(),
+                    admin.getEmail(),
+                    admin.getRole(),      // UserRole.ADMIN
                     token,
-                    user.getAdminCode()
+                    admin.getAdminCode()
             );
 
-            return ResponseEntity.ok(vo);
+            return ResponseEntity.ok(resp);
 
         } catch (BadCredentialsException e) {
+            // 帳號或密碼錯誤 → 401
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
+            // 其它非預期錯誤 → 500
             logger.error("管理員登入失敗", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登入失敗，請稍後再試");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("管理員登入失敗，請稍後再試");
         }
     }
 

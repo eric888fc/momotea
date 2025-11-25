@@ -1,7 +1,10 @@
 package demo.bigwork.service.Impl;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -9,6 +12,10 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +27,11 @@ import demo.bigwork.model.vo.AdminReportVO;
 import demo.bigwork.model.vo.CategorySalesVO;
 import demo.bigwork.model.vo.FinancialReportVO;
 import demo.bigwork.service.AdminReportService;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class AdminReportServiceImpl implements AdminReportService {
@@ -54,11 +66,12 @@ public class AdminReportServiceImpl implements AdminReportService {
             row = summaryList.get(0);
         }
 
-        long totalOrderCount   = ((Number) row[0]).longValue();
+        long totalOrderCount   = row[0] == null ? 0L : ((Number) row[0]).longValue();
         BigDecimal totalAmount = (BigDecimal) row[1];
-        long smallOrderCount   = ((Number) row[2]).longValue();
-        long mediumOrderCount  = ((Number) row[3]).longValue();
-        long largeOrderCount   = ((Number) row[4]).longValue();
+
+        long smallOrderCount   = row[2] == null ? 0L : ((Number) row[2]).longValue();
+        long mediumOrderCount  = row[3] == null ? 0L : ((Number) row[3]).longValue();
+        long largeOrderCount   = row[4] == null ? 0L : ((Number) row[4]).longValue();
 
         if (totalAmount == null) {
             totalAmount = BigDecimal.ZERO;
@@ -114,8 +127,6 @@ public class AdminReportServiceImpl implements AdminReportService {
     @Override
     public FinancialReportVO generateFinancialReport(String period) {
 
-
-
         // === 1. 計算「本期」起訖日期 ===
         LocalDate today = LocalDate.now();
         LocalDate currentStartDate;
@@ -159,8 +170,6 @@ public class AdminReportServiceImpl implements AdminReportService {
         // === 5. 組成 FinancialReportVO（完全照你給的 VO 欄位） ===
         FinancialReportVO vo = new FinancialReportVO();
 
-
-
         // 日期
         vo.setCurrentStartDate(currentStartDate);
         vo.setCurrentEndDate(currentEndDate);
@@ -196,11 +205,6 @@ public class AdminReportServiceImpl implements AdminReportService {
         long currentOrderCount  = current.getTotalOrderCount();
         long previousOrderCount = previous.getTotalOrderCount();
 
-
-
-
-
-
         vo.setCurrentOrderCount(currentOrderCount);
         vo.setPreviousOrderCount(previousOrderCount);
 
@@ -221,10 +225,9 @@ public class AdminReportServiceImpl implements AdminReportService {
         vo.setCurrentOrders((int) currentOrderCount);
         vo.setPreviousOrders((int) previousOrderCount);
 
-
         return vo;
     }
-    
+
     @Override
     public AdminReportVO generateReportForCurrentWeek() {
         LocalDate today = LocalDate.now();
@@ -248,5 +251,81 @@ public class AdminReportServiceImpl implements AdminReportService {
         LocalDate end   = start.plusMonths(3).minusDays(1); // 該季最後一天
 
         return generateReport(start, end);
+    }
+    @Override
+    public void exportReport(String period, HttpServletResponse response) throws IOException {
+        // 1. 先決定要用哪一份報表資料
+        AdminReportVO report;
+        String fileName;
+
+        if ("weekly".equalsIgnoreCase(period)) {
+            report = generateReportForCurrentWeek();
+            fileName = "週報表.xlsx";
+        } else if ("quarterly".equalsIgnoreCase(period)) {
+            report = generateReportForCurrentQuarter();
+            fileName = "季報表.xlsx";
+        } else {
+            // 這裡只丟 IllegalArgumentException（會變成 400），不要丟 AccessDeniedException
+            throw new IllegalArgumentException("不支援的 period: " + period);
+        }
+
+        // 2. 用 Apache POI 組 Excel
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("營運報表");
+
+            int r = 0;
+            Row row;
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("期間");
+            row.createCell(1).setCellValue(report.getStartDate() + " ~ " + report.getEndDate());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("訂單總數");
+            row.createCell(1).setCellValue(report.getTotalOrderCount());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("訂單總金額");
+            row.createCell(1).setCellValue(report.getTotalOrderAmount().doubleValue());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("平均訂單金額");
+            row.createCell(1).setCellValue(report.getAverageOrderAmount().doubleValue());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("小額訂單數(≤500)");
+            row.createCell(1).setCellValue(report.getSmallOrderCount());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("中額訂單數(500-2000)");
+            row.createCell(1).setCellValue(report.getMediumOrderCount());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("大額訂單數(≥2000)");
+            row.createCell(1).setCellValue(report.getLargeOrderCount());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("新增買家數");
+            row.createCell(1).setCellValue(report.getNewBuyerCount());
+
+            row = sheet.createRow(r++);
+            row.createCell(0).setCellValue("新增賣家數");
+            row.createCell(1).setCellValue(report.getNewSellerCount());
+
+         // 3. 設定 Response Header
+            response.setContentType(
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8");
+
+            String encodedName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
+
+            response.setHeader("Content-Disposition",
+                    "attachment; filename*=UTF-8''" + encodedName);
+            ServletOutputStream out = response.getOutputStream();
+
+            // 4. 寫出檔案
+            wb.write(out);
+            out.flush();
+
+           }
     }
 }

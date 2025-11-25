@@ -43,7 +43,7 @@ CREATE TABLE `bank_accounts` (
 
 LOCK TABLES `bank_accounts` WRITE;
 /*!40000 ALTER TABLE `bank_accounts` DISABLE KEYS */;
-INSERT INTO `bank_accounts` VALUES (1,3,'銀行','陳大','88889999'),(2,9,'玉山銀行','QAQ','88888888');
+INSERT INTO `bank_accounts` VALUES (1,3,'銀行','陳大','88889999'),(2,9,'玉銀行','QAQ','77778888');
 /*!40000 ALTER TABLE `bank_accounts` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -56,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-25 11:30:36
+-- Dump completed on 2025-11-25 15:18:19
