@@ -64,4 +64,5 @@ public interface ProductDAO extends JpaRepository<ProductPO, Long> {
      * (e.g., findByNameContaining("iPhone"))
      */
     List<ProductPO> findByNameContaining(String name);
+    
 }
