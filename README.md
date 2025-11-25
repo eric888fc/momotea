@@ -153,8 +153,7 @@
 
 本專案圍繞著 `users`, `products`, 和 `orders` 三大核心實體構建。
 
-<img width="950" height="961" alt="ER" src="https://github.com/user-attachments/assets/3cca982f-e9e1-4c6e-8489-1a48a731dd23" />
-
+<img width="937" height="880" alt="image" src="https://github.com/user-attachments/assets/7f13b847-d0c1-4093-aab2-a2e7258f14ae" />
 
 ### 資料表介紹 (Table Definitions)
 
