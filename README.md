@@ -212,34 +212,14 @@
 3.  **開始使用:**
     * 您的瀏覽器將自動打開 `http://127.0.0.1:5500/html/index.html`。
     * 點擊「註冊」並分別建立一個 `BUYER` 和一個 `SELLER` 帳號即可開始測試所有功能。
-### 3. JAR 
-1.  **新增資料夾:** 把jar跟uploads放入資料夾中。
-    <img width="713" height="233" alt="image" src="https://github.com/user-attachments/assets/ae2858bc-9b9f-4108-a064-e5f7554e8f9d" />
 
-2.  **開啟cmd:**
-    * 在cmd中cd 到資料夾路徑。
-    * 在 cmd上執行 `java -jar bigwork-0.0.1-SNAPSHOT.jar`。
-    <img width="622" height="166" alt="image" src="https://github.com/user-attachments/assets/65343b9b-5779-4eb7-a65f-b0441af1fe1e" />
-
-3.  **開始使用:**
-    * 在您的瀏覽器輸入 `http://localhost:8080/` ，就可以開啟角色選擇畫面了。
-    <img width="1918" height="941" alt="image" src="https://github.com/user-attachments/assets/1a35b2f0-72d6-47a2-a797-51dc6041cfb2" />
-
-### 4. Ngrok(先安裝ngrok.exe):
+### 3. Ngrok(先安裝ngrok.exe):
 請按照以下步驟操作，只需 3 分鐘：
 
 1. **開啟Ngrok:**
 輸入:'ngrok http --domain=gayla-unbriefed-unreluctantly.ngrok-free.dev 8080'
 
-⚠️ 重要提醒
-
-修改後端設定： 打開您的 src/main/resources/application.properties，修改綠界的 Return URL：
-
-記得後面要加上 /api/wallet/ecpay/callback(或要呼叫的api):
-'ecpay.return-url=https://gayla-unbriefed-unreluctantly.ngrok-free.dev/api/wallet/ecpay/callback'
-重啟 Spring Boot： 修改設定檔後，記得重啟後端程式。
-
-注意： Ngrok 免費版的網址每次重新啟動 Ngrok 都會變。所以如果您關掉了 CMD視窗再重開，就要重複步驟 1~3 (去 application.properties 更新網址)。
+注意：每次測試都要讓Ngrok保持開啟狀態，不然後端收不到綠界回傳的資料。
 ---
 
 ## 🏛️ 專案架構 (Architecture)
