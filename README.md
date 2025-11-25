@@ -41,7 +41,6 @@
     * 使用 JWT (JSON Web Tokens) 進行 API 身份驗證。
     * 支援「發送Email驗證碼」 (`/api/auth/send-code`)。
       <img width="587" height="335" alt="image" src="https://github.com/user-attachments/assets/33879d45-67e2-40a9-ada2-064fb4b7df48" />
-
     * 支援「忘記密碼」和「重設密碼」流程。
       <table>
         <tr>
@@ -151,6 +150,9 @@
       <img width="942" height="934" alt="image" src="https://github.com/user-attachments/assets/ad5c443e-7d04-4efb-89b3-8d8cd4906f05" />
       
 ### 4.角色：管理員 (ADMIN)
+* **登入:**
+  * 使用管理員編號登入。
+  <img width="510" height="489" alt="image" src="https://github.com/user-attachments/assets/fe736ae0-d1de-45be-b5b1-006162699337" />
 * **營運報表:**
     * 在 `admin-dashboard.html` 檢視訂單金額區間、新會員比例、熱銷商品類別 Top 5跟財務報表。
      <table>
@@ -173,7 +175,7 @@
 | **前端 (Frontend)** | Vanilla JavaScript (ES6+ Async/Await, Fetch API), HTML5, CSS3 |
 | **資料庫 (Database)** | MySQL |
 | **驗證 (Validation)** | `jakarta.validation` ( ` @Valid`, `@Pattern` ) |
-| **Java 核心** | POJO (實體), VO/DTO (資料傳輸), DAO (儲存庫), Service, Controller 分層架構 |
+| **Java 核心** | POJO (實體), VO (資料傳輸), DAO (儲存庫), Service, Controller 分層架構 |
 
 ---
 
@@ -207,7 +209,7 @@
 ### 資料表介紹 (Table Definitions)
 
 #### 1. 使用者 & 認證 (User & Auth)
-* **`users`**: 核心使用者表。`role` 欄位 ('BUYER' / 'SELLER') 用於區分角色。
+* **`users`**: 核心使用者表,`role` 欄位 ('BUYER' / 'SELLER' / 'ADMIN') 用於區分角色,'admin_code'用來存放管理員編號。
 * **`password_reset_tokens`**: 存放「忘記密碼」時產生的一次性 Token。關聯 `user_id`。
 
 #### 2. 商品 & 分類 (Product & Catalog)
