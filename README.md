@@ -22,10 +22,12 @@
 
 這個平台區分為「管理員」、「買家」和「賣家」三種視角。
 
-### 角色選擇:
-<img width="544" height="398" alt="image" src="https://github.com/user-attachments/assets/7f0449d8-f560-46d3-8f1c-89e183ae0fca" />
+
 
 ### 1：公開 (Public)
+* **角色選擇:**
+      <img width="544" height="398" alt="image" src="https://github.com/user-attachments/assets/7f0449d8-f560-46d3-8f1c-89e183ae0fca" />
+
 * **認證 (Auth):**
     * 買家/賣家 角色分離的登入/註冊 。
       <table>
@@ -38,10 +40,10 @@
           </td>
         </tr>
       </table>
-    * 使用 JWT (JSON Web Tokens) 進行 API 身份驗證。
+* **使用 JWT (JSON Web Tokens) 進行 API 身份驗證。**
     * 支援「發送Email驗證碼」 (`/api/auth/send-code`)。
       <img width="587" height="335" alt="image" src="https://github.com/user-attachments/assets/33879d45-67e2-40a9-ada2-064fb4b7df48" />
-    * 支援「忘記密碼」和「重設密碼」流程。
+* **「忘記密碼」和「重設密碼」流程。**
       <table>
         <tr>
           <td valign="top">
