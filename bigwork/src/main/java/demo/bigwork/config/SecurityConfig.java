@@ -128,7 +128,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/ratings/*").hasRole("BUYER")
                         .requestMatchers(HttpMethod.DELETE, "/api/ratings/*").hasRole("BUYER")
                         // 開放給綠界伺服器呼叫 (無 Token)
-                        .requestMatchers("/api/wallet/ecpay/callback", "/notify").permitAll()
+                        .requestMatchers("/notify").permitAll()
                         
                         // 建立訂單 API (必須登入，才能抓取購物車)
                         .requestMatchers("/createOrder").authenticated()
