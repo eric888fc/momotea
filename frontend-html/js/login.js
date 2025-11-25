@@ -1,290 +1,306 @@
-// 後端 Auth API 的根路徑
-const API_BASE = "http://localhost:8080/api/auth";
-
 document.addEventListener("DOMContentLoaded", () => {
-    const roleTabs = document.querySelectorAll(".role-tab");
-    const selectedRoleInput = document.getElementById("selected-role");
-    const roleHint = document.getElementById("role-hint");
 
-    const messageContainer = document.getElementById("message-container");
+    const API_BASE_URL = "http://localhost:8080";
+    const params = new URLSearchParams(window.location.search);
+    const role = params.get('role'); // "BUYER", "SELLER", "ADMIN"
 
+    // (DOM 元素)
+    const pageTitle = document.getElementById("page-title");
     const loginForm = document.getElementById("login-form");
     const registerForm = document.getElementById("register-form");
+    
     const showRegisterLink = document.getElementById("show-register-link");
     const showLoginLink = document.getElementById("show-login-link");
-    const loginToRegisterP = document.getElementById("login-to-register");
+    const switchContainer = document.querySelector(".toggle-link"); 
 
-    const loginAccountLabel = document.getElementById("login-account-label");
-    const loginEmailInput = document.getElementById("login-email");
-    const loginPasswordInput = document.getElementById("login-password");
-
+    const messageContainer = document.getElementById("message-container");
+    const sendCodeBtn = document.getElementById("send-code-btn");
     const regEmailInput = document.getElementById("reg-email");
     const regCodeInput = document.getElementById("reg-code");
-    const regPasswordInput = document.getElementById("reg-password");
-    const regNameInput = document.getElementById("reg-name");
-    const regPhoneInput = document.getElementById("reg-phone");
-    const regAddressInput = document.getElementById("reg-address");
-    const sendCodeBtn = document.getElementById("send-code-btn");
+    
+    // (取得登入輸入框的 Label 和 Input)
+    const loginAccountLabel = document.querySelector("label[for='login-email']");
+    const loginAccountInput = document.getElementById("login-email");
 
-    // ===== 通用訊息顯示 =====
-    function setMessage(text, type = "info") {
-        if (!messageContainer) return;
-        messageContainer.textContent = text || "";
-        messageContainer.className = "message";
-
-        if (text) {
-            if (type === "error") {
-                messageContainer.classList.add("error-message");
-            } else if (type === "success") {
-                messageContainer.classList.add("success-message");
-            }
+    // ==========================================
+    // 1. 初始化頁面 (UI 調整)
+    // ==========================================
+    if (role === 'BUYER') {
+        pageTitle.textContent = "買家 登入 / 註冊";
+    } else if (role === 'SELLER') {
+        pageTitle.textContent = "賣家 登入 / 註冊";
+    } else if (role === 'ADMIN') {
+        // --- 管理員 UI 設定 ---
+        pageTitle.textContent = "管理員登入";
+        
+        // 修改 Label 和 Placeholder
+        if (loginAccountLabel) loginAccountLabel.textContent = "管理員編號 (Admin Code):";
+        if (loginAccountInput) loginAccountInput.placeholder = "請輸入管理員編號";
+        
+        // 隱藏註冊連結
+        if (switchContainer) {
+            switchContainer.style.display = 'none'; 
+        } else if (showRegisterLink) {
+            showRegisterLink.style.display = 'none';
         }
+        
+    } else {
+        window.location.href = 'index.html'; 
+        return; 
     }
 
-    // ===== 角色切換 UI =====
-    function updateUIForRole(role) {
-        selectedRoleInput.value = role;
-
-        if (role === "BUYER") {
-            loginAccountLabel.textContent = "電子郵件 (Email):";
-            roleHint.textContent = "目前身分：買家（使用 Email 登入，可線上註冊）";
-            loginToRegisterP.style.display = "block";
-        } else if (role === "SELLER") {
-            loginAccountLabel.textContent = "電子郵件 (Email):";
-            roleHint.textContent = "目前身分：賣家（使用 Email 登入，可線上註冊）";
-            loginToRegisterP.style.display = "block";
-        } else if (role === "ADMIN") {
-            loginAccountLabel.textContent = "管理員編號:";
-            roleHint.textContent = "目前身分：系統管理員（使用預先建立的管理員編號登入，不開放線上註冊）";
-            loginToRegisterP.style.display = "none"; // 管理員不顯示註冊入口
-            registerForm.style.display = "none";
-            loginForm.style.display = "block";
-            setMessage("");
-        }
-    }
-
-    // 角色 tab 點擊
-    roleTabs.forEach(tab => {
-        tab.addEventListener("click", () => {
-            roleTabs.forEach(t => t.classList.remove("active"));
-            tab.classList.add("active");
-            const role = tab.dataset.role;
-            updateUIForRole(role);
-        });
-    });
-
-    // ===== 登入 / 註冊表單切換 =====
-    if (showRegisterLink) {
+    // ==========================================
+    // 2. 表單切換 (僅非管理員有效)
+    // ==========================================
+    if (role !== 'ADMIN' && showRegisterLink) {
         showRegisterLink.addEventListener("click", (e) => {
             e.preventDefault();
-            const role = selectedRoleInput.value;
-
-            if (role === "ADMIN") {
-                setMessage("系統管理員帳號需由後台預先建立，無法在線上註冊。", "error");
-                return;
-            }
-
-            loginForm.style.display = "none";
-            registerForm.style.display = "block";
-            setMessage("");
+            loginForm.style.display = 'none';
+            registerForm.style.display = 'block';
+            showMessage('', 'clear');
         });
     }
 
-    if (showLoginLink) {
+    if (role !== 'ADMIN' && showLoginLink) {
         showLoginLink.addEventListener("click", (e) => {
             e.preventDefault();
-            registerForm.style.display = "none";
-            loginForm.style.display = "block";
-            setMessage("");
+            loginForm.style.display = 'block';
+            registerForm.style.display = 'none';
+            showMessage('', 'clear');
         });
     }
 
-    // ===== 送出驗證碼 =====
-    if (sendCodeBtn) {
-        sendCodeBtn.addEventListener("click", async () => {
-            const email = regEmailInput.value.trim();
-            if (!email) {
-                setMessage("請先輸入 Email 再取得驗證碼。", "error");
-                return;
-            }
+    // ==========================================
+    // 3. 登入邏輯 (API 路徑與參數分流)
+    // ==========================================
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+        const accountInput = loginAccountInput.value; 
+        const passwordInput = loginForm.password.value;
+        const expectedRole = role; 
+        
+        // 預設變數
+        let loginUrl = "";
+        let payload = {};
 
-            try {
-                const res = await fetch(`${API_BASE}/send-code`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ email })
-                });
-
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(text || "發送驗證碼失敗");
-                }
-
-                const msg = await res.text();
-                setMessage(msg || "驗證碼已寄出，請至信箱查看。", "success");
-            } catch (err) {
-                console.error(err);
-                setMessage(err.message || "發送驗證碼失敗，請稍後再試。", "error");
-            }
-        });
-    }
-
-    // ===== 登入處理 =====
-    if (loginForm) {
-        loginForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            setMessage("");
-
-            const role = selectedRoleInput.value;
-            const account = loginEmailInput.value.trim();
-            const password = loginPasswordInput.value.trim();
-
-            if (!account || !password) {
-                setMessage("請輸入帳號與密碼。", "error");
-                return;
-            }
-
-            let url = "";
-            let payload = {};
-
-            if (role === "ADMIN") {
-                url = `${API_BASE}/admin-login`;
-                payload = {
-                    adminCode: account,
-                    password: password
-                };
-            } else {
-                // BUYER / SELLER 共用
-                url = `${API_BASE}/login`;
-                payload = {
-                    email: account,
-                    password: password
-                };
-            }
-
-            try {
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(text || "登入失敗");
-                }
-
-                const data = await res.json();
-                // 預期後端回傳: { message, userId, name, email, role, token, adminCode }
-
-                // 如果按的是「管理員登入」但後端說不是 ADMIN，就擋掉
-                if (role === "ADMIN" && data.role !== "ADMIN") {
-                    setMessage("此帳號不是系統管理員。", "error");
-                    return;
-                }
-
-                // ===== 把舊的登入資訊清乾淨，避免 BUYER / SELLER 殘留 =====
-                localStorage.removeItem("authToken");
-                localStorage.removeItem("userRole");
-                localStorage.removeItem("userName");
-                localStorage.removeItem("adminCode");
-                // 舊版留下來的 key 一併清掉
-                localStorage.removeItem("token");
-                localStorage.removeItem("role");
-                localStorage.removeItem("name");
-
-                // ===== 儲存這次登入資訊（全專案統一用這幾顆）=====
-                localStorage.setItem("authToken", data.token);
-                localStorage.setItem("userRole", data.role); // "BUYER" / "SELLER" / "ADMIN"
-
-                if (data.name) {
-                    localStorage.setItem("userName", data.name);
-                }
-                if (data.adminCode) {
-                    localStorage.setItem("adminCode", data.adminCode);
-                }
-
-                setMessage(data.message || "登入成功。", "success");
-
-                // 依角色導頁
-                if (data.role === "BUYER") {
-                    window.location.href = "buyer-home.html";
-                } else if (data.role === "SELLER") {
-                    window.location.href = "seller-home.html";
-                } else if (data.role === "ADMIN") {
-                    window.location.href = "admin-dashboard.html";
-                }
-
-            } catch (err) {
-                console.error(err);
-                setMessage(err.message || "登入失敗，請稍後再試。", "error");
-            }
-        });
-    }
-
-    // ===== 註冊處理（BUYER / SELLER） =====
-    if (registerForm) {
-        registerForm.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            setMessage("");
-
-            const role = selectedRoleInput.value;
-            if (role === "ADMIN") {
-                setMessage("系統管理員帳號無法在線上註冊。", "error");
-                return;
-            }
-
-            const email = regEmailInput.value.trim();
-            const verificationCode = regCodeInput.value.trim();
-            const password = regPasswordInput.value.trim();
-            const name = regNameInput.value.trim();
-            const phone = regPhoneInput.value.trim();
-            const address = regAddressInput.value.trim();
-
-            if (!email || !verificationCode || !password || !name || !phone || !address) {
-                setMessage("請完整填寫所有欄位。", "error");
-                return;
-            }
-
-            const payload = {
-                email,
-                verificationCode,
-                password,
-                name,
-                phone,
-                address
+        // (★ URL 與 Payload 分流)
+        if (role === 'ADMIN') {
+            // 管理員專用 API
+            loginUrl = `${API_BASE_URL}/api/auth/admin-login`;
+            payload = { 
+                adminCode: accountInput, 
+                password: passwordInput 
             };
+        } else {
+            // 買家/賣家通用 API
+            loginUrl = `${API_BASE_URL}/api/auth/login`;
+            payload = { 
+                email: accountInput, 
+                password: passwordInput 
+            };
+        }
 
-            const url =
-                role === "SELLER"
-                    ? `${API_BASE}/register/seller`
-                    : `${API_BASE}/register/buyer`;
+        try {
+            const response = await fetch(loginUrl, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload),
+            });
 
-            try {
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+            if (response.ok) {
+                const data = await response.json(); 
+                const actualRole = data.role; 
 
-                if (!res.ok) {
-                    const text = await res.text();
-                    throw new Error(text || "註冊失敗");
+                // (身分驗證)
+                if (actualRole !== expectedRole) {
+                    let expectedText = getRoleName(expectedRole);
+                    let actualText = getRoleName(actualRole);
+                    
+                    showMessage(`登入失敗：您的帳號身分是「${actualText}」，但此頁面僅限「${expectedText}」登入。`, 'error');
+                    return; 
                 }
 
-                setMessage("註冊成功，請回到登入頁使用新帳號登入。", "success");
+                // (儲存 Token + 角色)
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', actualRole);
 
-                registerForm.reset();
-                registerForm.style.display = "none";
-                loginForm.style.display = "block";
+                // ★★★ 這裡是新增的部分：處理 ADMIN 額外資訊 ★★★
+                if (actualRole === 'ADMIN') {
+                    // 管理員：存 adminCode / name，給 admin-dashboard 使用
+                    if (data.adminCode) {
+                        localStorage.setItem('adminCode', data.adminCode);
+                    }
+                    if (data.name) {
+                        localStorage.setItem('userName', data.name);
+                    }
+                } else {
+                    // 一般會員：避免殘留舊的 adminCode
+                    localStorage.removeItem('adminCode');
+                }
+                // ★★★ 以上新增結束，其餘不動 ★★★
+                
+                showMessage('登入成功！正在跳轉.', 'success');
+                
+                // (跳轉邏輯)
+                setTimeout(() => {
+                    if (actualRole === 'BUYER') {
+                        window.location.href = 'products.html'; 
+                    } else if (actualRole === 'SELLER') {
+                        window.location.href = 'seller-dashboard.html'; 
+                    } else if (actualRole === 'ADMIN') {
+                        window.location.href = 'admin-dashboard.html'; 
+                    }
+                }, 1500);
+                
+            } else {
+                // 失敗時讀取錯誤訊息
+                const errorMessage = await response.text(); 
+                showMessage(errorMessage, 'error'); 
+            }
+        } catch (error) {
+            console.error('登入 API 錯誤:', error);
+            showMessage("系統錯誤: " + error.message, 'error'); 
+        }
+    });
 
-            } catch (err) {
-                console.error(err);
-                setMessage(err.message || "註冊失敗，請稍後再試。", "error");
+    // ==========================================
+    // 4. 發送驗證碼 (僅 BUYER/SELLER 需要)
+    // ==========================================
+    if (sendCodeBtn && role !== 'ADMIN') {
+        sendCodeBtn.addEventListener("click", async () => {
+            const email = regEmailInput.value;
+            if (!email) {
+                showMessage('請先輸入 Email', 'error');
+                return;
+            }
+
+            // UI 倒數鎖定
+            sendCodeBtn.disabled = true;
+            let countdown = 60;
+            sendCodeBtn.textContent = `重新發送 (${countdown})`;
+            const interval = setInterval(() => {
+                countdown--;
+                sendCodeBtn.textContent = `重新發送 (${countdown})`;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    sendCodeBtn.disabled = false;
+                    sendCodeBtn.textContent = '獲取驗證碼';
+                }
+            }, 1000);
+
+            const sendCodeUrl = `${API_BASE_URL}/api/auth/send-code`;
+            
+            try {
+                const response = await fetch(sendCodeUrl, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: email }) 
+                });
+                
+                if (response.ok) {
+                    const successMessage = await response.text(); 
+                    showMessage(successMessage, 'success'); 
+                    console.log("開發模式提示: 請查看後端 Console 獲取驗證碼");
+                } else {
+                    let errorMessage = '發送失敗';
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.message || '發送失敗';
+                    } catch (e) {
+                        errorMessage = await response.text();
+                    }
+                    // 失敗時重置按鈕
+                    clearInterval(interval);
+                    sendCodeBtn.disabled = false;
+                    sendCodeBtn.textContent = '獲取驗證碼';
+                    showMessage(errorMessage, 'error');
+                }
+            } catch (error) {
+                console.error('發送驗證碼 API 錯誤:', error);
+                showMessage("網路錯誤: " + error.message, 'error');
+                clearInterval(interval); 
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.textContent = '獲取驗證碼';
             }
         });
     }
 
-    // 初始狀態：買家
-    updateUIForRole("BUYER");
+    // ==========================================
+    // 5. 註冊邏輯 (僅 BUYER/SELLER 需要)
+    // ==========================================
+    if (registerForm && role !== 'ADMIN') {
+        registerForm.addEventListener("submit", async (e) => {
+            e.preventDefault(); 
+            
+            const formData = {
+                email: regEmailInput.value,
+                password: registerForm.password.value,
+                name: registerForm.name.value,
+                phone: registerForm.phone.value,
+                address: registerForm.address.value,
+                code: regCodeInput.value 
+            };
+            
+            // 根據 role 決定註冊 API
+            const registerUrl = `${API_BASE_URL}/api/auth/register/${role.toLowerCase()}`;
+            
+            try {
+                const response = await fetch(registerUrl, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await response.json(); // 註冊通常回傳 JSON (含 token)
+
+                if (response.ok) {
+                    const actualRole = data.role; 
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('role', actualRole); 
+                    
+                    showMessage('註冊成功！正在自動登入.', 'success');
+                    
+                    setTimeout(() => {
+                        if (actualRole === 'BUYER') {
+                            window.location.href = 'products.html'; 
+                        } else if (actualRole === 'SELLER') {
+                            window.location.href = 'seller-dashboard.html'; 
+                        }
+                    }, 1500);
+                    
+                } else {
+                    showMessage(data.message || '註冊失敗', 'error');
+                }
+            } catch (error) {
+                console.error('註冊 API 錯誤:', error);
+                showMessage("系統錯誤: " + error.message, 'error');
+            }
+        });
+    }
+
+    // ==========================================
+    // 輔助函式
+    // ==========================================
+    function showMessage(message, type = 'error') {
+        if (!messageContainer) return;
+        
+        messageContainer.textContent = message;
+        messageContainer.className = `message ${type}`;
+        
+        if (type === 'clear') {
+             messageContainer.style.display = 'none';
+        } else {
+             messageContainer.style.display = 'block';
+        }
+    }
+
+    function getRoleName(roleCode) {
+        switch(roleCode) {
+            case 'BUYER': return '買家';
+            case 'SELLER': return '賣家';
+            case 'ADMIN': return '管理員';
+            default: return roleCode;
+        }
+    }
 });

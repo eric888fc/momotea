@@ -49,6 +49,13 @@ body.auth-page {
 .role-button.seller:hover {
     background-color: #1e7e34;
 }
+/* (選用) 簡單增加一點 Admin 按鈕的樣式區隔 */
+        .role-button.admin {
+            background-color: #333; /* 深灰色 */
+        }
+        .role-button.admin:hover {
+            background-color: #555;
+        }
 
 /* --- 4. 登入/註冊表單 --- */
 .form-container {
