@@ -37,6 +37,8 @@ public interface UserService {
      */
     void createPasswordResetToken(String email) throws Exception;
     
+    void verifyEmail(String email, String code) throws Exception;
+    
     /**
      * 業務邏輯：使用 Token 重設密碼
      * (給 /api/auth/reset-password 呼叫)

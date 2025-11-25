@@ -42,17 +42,16 @@ public class AuthHelperService {
             throw new AccessDeniedException("未登入或 Token 無效");
         }
 
-        // 在你的設計中 authentication.getName() = Email
-        String username = authentication.getName();
+        String username = authentication.getName();  // 可能是 email，也可能是 adminCode
 
+        // 先用 email 找，找不到再用 adminCode 找
         return userDAO.findByEmail(username)
+                .or(() -> userDAO.findByAdminCode(username))
                 .orElseThrow(() ->
                         new UsernameNotFoundException("Token 有效，但使用者不存在: " + username));
     }
 
-    /**
-     * 取得「當前已登入」的賣家 (SELLER)
-     */
+    /** 取得「當前已登入」的賣家 (SELLER) */
     public UserPO getCurrentAuthenticatedSeller() throws AccessDeniedException {
         UserPO user = getCurrentAuthenticatedUser();
 
@@ -62,9 +61,7 @@ public class AuthHelperService {
         return user;
     }
 
-    /**
-     * 取得「當前已登入」的買家 (BUYER)
-     */
+    /** 取得「當前已登入」的買家 (BUYER) */
     public UserPO getCurrentAuthenticatedBuyer() throws AccessDeniedException {
         UserPO user = getCurrentAuthenticatedUser();
 
@@ -74,11 +71,12 @@ public class AuthHelperService {
         return user;
     }
 
-    /**
-     * ✅ 新增：取得「當前已登入」的系統管理員 (ADMIN)
-     */
+    /** 取得「當前已登入」的系統管理員 (ADMIN) */
     public UserPO getCurrentAuthenticatedAdmin() throws AccessDeniedException {
         UserPO user = getCurrentAuthenticatedUser();
+
+        System.out.println("[AuthHelperService] current user = "
+                + user.getUserId() + ", role = " + user.getRole());
 
         if (user.getRole() != UserRole.ADMIN) {
             throw new AccessDeniedException("只有系統管理員 (ADMIN) 才能執行此操作");
