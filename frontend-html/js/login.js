@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let loginUrl = "";
         let payload = {};
 
-        // (★ 關鍵修正：URL 與 Payload 分流)
+        // (★ URL 與 Payload 分流)
         if (role === 'ADMIN') {
             // 管理員專用 API
             loginUrl = `${API_BASE_URL}/api/auth/admin-login`;
@@ -121,11 +121,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     return; 
                 }
 
-                // (儲存 Token)
+                // (儲存 Token + 角色)
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('role', actualRole);
+
+                // ★★★ 這裡是新增的部分：處理 ADMIN 額外資訊 ★★★
+                if (actualRole === 'ADMIN') {
+                    // 管理員：存 adminCode / name，給 admin-dashboard 使用
+                    if (data.adminCode) {
+                        localStorage.setItem('adminCode', data.adminCode);
+                    }
+                    if (data.name) {
+                        localStorage.setItem('userName', data.name);
+                    }
+                } else {
+                    // 一般會員：避免殘留舊的 adminCode
+                    localStorage.removeItem('adminCode');
+                }
+                // ★★★ 以上新增結束，其餘不動 ★★★
                 
-                showMessage('登入成功！正在跳轉...', 'success');
+                showMessage('登入成功！正在跳轉.', 'success');
                 
                 // (跳轉邏輯)
                 setTimeout(() => {
@@ -244,7 +259,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('role', actualRole); 
                     
-                    showMessage('註冊成功！正在自動登入...', 'success');
+                    showMessage('註冊成功！正在自動登入.', 'success');
                     
                     setTimeout(() => {
                         if (actualRole === 'BUYER') {

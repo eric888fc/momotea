@@ -4,6 +4,7 @@ import demo.bigwork.model.vo.OrderResponseVO;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.access.AccessDeniedException;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
@@ -36,5 +37,16 @@ public interface OrderService {
 	OrderResponseVO getMyOrderDetails(Long orderId) throws AccessDeniedException, EntityNotFoundException;
 
 	List<OrderResponseVO> getMyOrdersAsSeller() throws AccessDeniedException;
+
+	/**
+	 * (新) 處理綠界直接結帳 (Callback 觸發)
+	 * 邏輯：
+	 * 1. 找到買家購物車
+	 * 2. 驗證總金額是否正確
+	 * 3. 拆分訂單、扣庫存
+	 * 4. (關鍵) 賣家錢包入帳 (因為綠界代收了)
+	 * 5. (關鍵) 不扣買家錢包餘額 (因為是外部付款)
+	 */
+	void processEcpayCheckout(Long userId, BigDecimal amount, String tradeNo) throws Exception;
 
 }

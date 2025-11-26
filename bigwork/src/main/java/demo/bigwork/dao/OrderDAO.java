@@ -1,6 +1,5 @@
 package demo.bigwork.dao;
 
-
 import demo.bigwork.model.po.OrderPO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -8,11 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
-import java.util.List;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
@@ -35,9 +29,9 @@ public interface OrderDAO extends JpaRepository<OrderPO, Long> {
             "SELECT " +
             "  COUNT(*) AS total_count, " +
             "  COALESCE(SUM(o.total_price),0) AS total_amount, " +
-            "  SUM(CASE WHEN o.total_price <= 500 THEN 1 ELSE 0 END) AS small_count, " +
-            "  SUM(CASE WHEN o.total_price > 500 AND o.total_price <= 2000 THEN 1 ELSE 0 END) AS medium_count, " +
-            "  SUM(CASE WHEN o.total_price > 2000 THEN 1 ELSE 0 END) AS large_count " +
+            "  COALESCE(SUM(CASE WHEN o.total_price <= 500 THEN 1 ELSE 0 END), 0) AS small_count, " +
+            "  COALESCE(SUM(CASE WHEN o.total_price > 500 AND o.total_price <= 2000 THEN 1 ELSE 0 END), 0) AS medium_count, " +
+            "  COALESCE(SUM(CASE WHEN o.total_price > 2000 THEN 1 ELSE 0 END), 0) AS large_count " +
             "FROM orders o " +
             "WHERE o.created_at >= :start " +
             "  AND o.created_at < :end " +

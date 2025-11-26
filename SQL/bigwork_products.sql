@@ -40,7 +40,7 @@ CREATE TABLE `products` (
   KEY `fk_products_categories_idx` (`category_id`),
   CONSTRAINT `fk_products_categories` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT `fk_products_users` FOREIGN KEY (`seller_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,7 +49,7 @@ CREATE TABLE `products` (
 
 LOCK TABLES `products` WRITE;
 /*!40000 ALTER TABLE `products` DISABLE KEYS */;
-INSERT INTO `products` VALUES (3,3,4,'粉塵','這是一個低品質的商品',88.00,5,'/uploads/60e59636-f44e-443d-a181-2944f3ffd64e.png','2025-11-05 08:28:44','2025-11-14 06:35:57'),(4,3,3,'軟糖','11111',50.00,100,'/uploads/96ed2859-dde3-44bc-a341-06ee1540caa0.png','2025-11-10 06:50:14','2025-11-23 13:51:22'),(5,3,3,'薯片','22222',30.00,36,'/uploads/465b9841-92b3-4380-b152-86ccb2704055.png','2025-11-10 07:26:42','2025-11-14 07:16:39'),(6,9,8,'大綠茶','很綠',30.00,34,'/uploads/a1398940-0d13-4b5d-8291-491f53432101.png','2025-11-11 09:20:41','2025-11-17 02:39:22'),(7,9,8,'熱飲','很燙',30.00,47,'/uploads/808736d5-3c77-4761-88ce-0a96be98eec1.png','2025-11-14 02:27:42','2025-11-17 07:00:29'),(8,9,5,'油泥蝦','很會跳的蝦',60.00,46,'/uploads/cb5959c6-5117-40cb-959f-8887672bd660.png','2025-11-14 02:28:23','2025-11-17 02:39:22'),(9,3,6,'箱子','很大的箱子',10.00,14,'/uploads/ed073a63-ceb8-4abc-9be7-01fdd746e3eb.png','2025-11-14 06:42:54','2025-11-23 13:50:10'),(10,16,5,'大蒜','777777777777',20.00,57,'/uploads/b6c49e53-e1ea-4f22-bb46-a9695f7c95f2.png','2025-11-14 07:48:50','2025-11-14 08:37:32'),(11,3,6,'77','1111111',100.00,28,'/uploads/ec66d9f2-4cc6-4dff-bdbb-76736afd3107.png','2025-11-17 02:12:06','2025-11-23 16:23:05'),(12,16,6,'桶子','很大的桶子',40.00,42,'/uploads/b30afa9f-3b78-49f1-abfd-e37161fb8ce5.png','2025-11-17 02:40:30','2025-11-19 04:34:25'),(13,16,5,'肉乾','1111111111',20.00,27,'/uploads/7e39e3f3-6e73-43e5-b769-5ca351bfa635.png','2025-11-19 04:00:16','2025-11-23 13:50:10');
+INSERT INTO `products` VALUES (3,3,4,'粉塵','這是一個低品質的商品',88.00,2,'/uploads/60e59636-f44e-443d-a181-2944f3ffd64e.png','2025-11-05 08:28:44','2025-11-25 03:06:28'),(4,3,3,'軟糖','11111',50.00,100,'/uploads/96ed2859-dde3-44bc-a341-06ee1540caa0.png','2025-11-10 06:50:14','2025-11-23 13:51:22'),(5,3,3,'薯片','22222',30.00,34,'/uploads/465b9841-92b3-4380-b152-86ccb2704055.png','2025-11-10 07:26:42','2025-11-25 06:47:19'),(6,9,8,'大綠茶','很綠',30.00,50,'/uploads/a1398940-0d13-4b5d-8291-491f53432101.png','2025-11-11 09:20:41','2025-11-25 06:51:29'),(7,9,8,'熱飲','很燙',30.00,45,'/uploads/808736d5-3c77-4761-88ce-0a96be98eec1.png','2025-11-14 02:27:42','2025-11-25 02:53:57'),(8,9,5,'油泥蝦','生猛海鮮',60.00,42,'/uploads/cb5959c6-5117-40cb-959f-8887672bd660.png','2025-11-14 02:28:23','2025-11-25 03:23:57'),(9,3,6,'箱子','很大的箱子',10.00,11,'/uploads/ed073a63-ceb8-4abc-9be7-01fdd746e3eb.png','2025-11-14 06:42:54','2025-11-24 09:17:08'),(10,16,5,'大蒜','味道很重的大蒜',20.00,54,'/uploads/b6c49e53-e1ea-4f22-bb46-a9695f7c95f2.png','2025-11-14 07:48:50','2025-11-26 01:24:38'),(11,3,6,'77','1111111',100.00,28,'/uploads/ec66d9f2-4cc6-4dff-bdbb-76736afd3107.png','2025-11-17 02:12:06','2025-11-23 16:23:05'),(12,16,6,'桶子','很大的桶子',40.00,37,'/uploads/b30afa9f-3b78-49f1-abfd-e37161fb8ce5.png','2025-11-17 02:40:30','2025-11-24 09:09:29'),(13,16,5,'肉乾','1111111111',20.00,16,'/uploads/7e39e3f3-6e73-43e5-b769-5ca351bfa635.png','2025-11-19 04:00:16','2025-11-25 08:27:38'),(14,9,3,'起司','多力多滋',40.00,47,'/uploads/cbd71bde-0cd6-4795-885f-cc4b0323b09f.png','2025-11-25 06:52:30','2025-11-25 07:35:59');
 /*!40000 ALTER TABLE `products` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -62,4 +62,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-24  0:25:35
+-- Dump completed on 2025-11-26  9:26:17

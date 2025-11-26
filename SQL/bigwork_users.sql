@@ -46,7 +46,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (3,'奸商','s1@gmail.com','$2a$10$dgjC6LR0WxbPS5fsCIHVG.ERBUH8ymbv6N4IjzO4zbJuyF41N0Z6u','SELLER','0912345678','高雄市','2025-11-03 08:35:32',NULL),(4,'雅買家','b1@gmail.com','$2a$10$BOC63u0wrLAhYplmMl/WGO6XVrcDghRJTwYO7CWNcRmHRx19AZbSu','BUYER','0912345678','taipei','2025-11-05 01:45:22',NULL),(9,'eeee','s2@gmail.com','$2a$10$160tyoa5IlXKf2NSDlcCjeHVgOrpmk25NpnrWQJ6FWYaS29.wX3oe','SELLER','0912345678','taipei','2025-11-10 01:38:11',NULL),(10,'666','b2@gmail.com','$2a$10$72OZsDAG/qysJr9p8POlougYwZZyLyWcAA/DckPDROqrIVGCP/UWy','BUYER','0912345678','台中','2025-11-12 09:32:02',NULL),(11,'奧客','b3@gmail.com','$2a$10$9kXPf.KTRlWGABZxFNjAIujMObU77tjOrNyJ.XQ0s7YPfHi9fU4nS','BUYER','0912345678','花蓮','2025-11-14 06:48:10',NULL),(16,'Admin','Admin01@gmail.com','$2a$10$winZjMMyiegDcQn9a7wNXOgcDYhtzBQV.lUav8pw/52WoFYGBwrmq','ADMIN','','台南','2025-11-14 07:47:50','ADM001'),(17,'Admin','Admin02@gmail.com','$2a$10$h.vVsKe0G4Jzh0WLD7O1WOMkDJfNO6iMIgtmvBTc9Zdnzyipxch5e','ADMIN',NULL,NULL,'2025-11-20 07:09:45','ADM002'),(18,'Admin','Admin01+@mail.com','$2a$10$dfef7kLDdcdOXnelztHSVueDe4e/TZuVd1fxf.lhzpRTVrYvwSWyG','ADMIN','0987654321','TW','2025-11-20 07:30:38','ADM003');
+INSERT INTO `users` VALUES (3,'奸商','s1@gmail.com','$2a$10$dgjC6LR0WxbPS5fsCIHVG.ERBUH8ymbv6N4IjzO4zbJuyF41N0Z6u','SELLER','0912345678','高雄市','2025-11-03 08:35:32',NULL),(4,'雅買家','b1@gmail.com','$2a$10$BOC63u0wrLAhYplmMl/WGO6XVrcDghRJTwYO7CWNcRmHRx19AZbSu','BUYER','0912345678','taipe','2025-11-05 01:45:22',NULL),(9,'eeee','s2@gmail.com','$2a$10$160tyoa5IlXKf2NSDlcCjeHVgOrpmk25NpnrWQJ6FWYaS29.wX3oe','SELLER','0912345678','taipei','2025-11-10 01:38:11',NULL),(10,'666','b2@gmail.com','$2a$10$72OZsDAG/qysJr9p8POlougYwZZyLyWcAA/DckPDROqrIVGCP/UWy','BUYER','0912345678','台中','2025-11-12 09:32:02',NULL),(11,'奧客','b3@gmail.com','$2a$10$9kXPf.KTRlWGABZxFNjAIujMObU77tjOrNyJ.XQ0s7YPfHi9fU4nS','BUYER','0912345678','花蓮','2025-11-14 06:48:10',NULL),(16,'ooo','s3@gmail.com','$2a$10$winZjMMyiegDcQn9a7wNXOgcDYhtzBQV.lUav8pw/52WoFYGBwrmq','SELLER','0912345678','台南','2025-11-14 07:47:50',''),(17,'Admin','Admin02@gmail.com','$2a$10$h.vVsKe0G4Jzh0WLD7O1WOMkDJfNO6iMIgtmvBTc9Zdnzyipxch5e','ADMIN',NULL,NULL,'2025-11-20 07:09:45','ADM002'),(18,'Admin','Admin01+@mail.com','$2a$10$dfef7kLDdcdOXnelztHSVueDe4e/TZuVd1fxf.lhzpRTVrYvwSWyG','ADMIN','0987654321','TW','2025-11-20 07:30:38','ADM003');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -59,4 +59,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-24  0:25:35
+-- Dump completed on 2025-11-26  9:26:16

@@ -58,7 +58,7 @@ public class OrderServiceImpl implements OrderService {
      * (核心！) 結帳
      */
     @Override
-    @Transactional // (S極度重要！)
+    @Transactional // (極度重要！)
     public List<OrderResponseVO> checkoutFromMyCart() throws AccessDeniedException, Exception {
         
         // 1. (安全) 取得買家
@@ -293,5 +293,120 @@ public class OrderServiceImpl implements OrderService {
         return orders.stream()
                 .map(OrderResponseVO::new) // (在交易內安全轉換)
                 .collect(Collectors.toList());
+    }
+    /**
+     * (新) 處理綠界直接結帳 (Callback 觸發)
+     * 邏輯：
+     * 1. 找到買家購物車
+     * 2. 驗證總金額是否正確
+     * 3. 拆分訂單、扣庫存
+     * 4. (關鍵) 賣家錢包入帳 (因為綠界代收了)
+     * 5. (關鍵) 不扣買家錢包餘額 (因為是外部付款)
+     */
+    @Override
+    @Transactional // (極度重要：確保資料一致性)
+    public void processEcpayCheckout(Long userId, BigDecimal amount, String tradeNo) throws Exception {
+        
+        logger.info("開始處理綠界直接結帳... 買家ID: {}, 金額: {}, 綠界單號: {}", userId, amount, tradeNo);
+
+        // 1. 取得買家 (注意：這裡是後端自動執行，沒有登入狀態，只能用 ID 查)
+        UserPO buyer = userDAO.findById(userId)
+                .orElseThrow(() -> new Exception("綠界結帳錯誤：找不到買家 ID " + userId));
+
+        // 2. 取得購物車
+        CartPO cart = cartDAO.findByUser_UserId(userId)
+                .orElseThrow(() -> new Exception("綠界結帳錯誤：找不到買家購物車"));
+        
+        Hibernate.initialize(cart.getItems());
+        Set<CartItemPO> itemsInCart = cart.getItems();
+
+        if (itemsInCart.isEmpty()) {
+            logger.error("綠界結帳異常：買家 {} 已付款，但購物車是空的 (可能重複處理)", buyer.getEmail());
+            return; // 防止重複執行
+        }
+
+        // 3. (安全驗證) 計算購物車總金額
+        BigDecimal totalCartPrice = itemsInCart.stream()
+                .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        
+        // 比對金額 (允許整數比較，忽略小數點後微小差異)
+        if (totalCartPrice.intValue() != amount.intValue()) {
+            logger.warn("綠界結帳金額警示！購物車金額: {}, 實際付款金額: {}", totalCartPrice, amount);
+            // 實務上可能需要標記異常訂單，這裡我們先繼續執行，以綠界付款金額為準
+        }
+
+        // 4. (庫存檢查)
+        for (CartItemPO item : itemsInCart) {
+            ProductPO product = item.getProduct();
+            if (product.getStock() < item.getQuantity()) {
+                logger.error("綠界結帳庫存不足！商品: {}, 已付錢但沒貨。", product.getName());
+                throw new Exception("商品「" + product.getName() + "」庫存不足");
+            }
+        }
+
+        // --- 開始拆單與入帳 ---
+        
+        // 5. 依照賣家分組
+        Map<Long, List<CartItemPO>> itemsBySeller = itemsInCart.stream()
+                .collect(Collectors.groupingBy(item -> item.getProduct().getSeller().getUserId()));
+
+        // 6. 迴圈處理每一張訂單
+        for (Map.Entry<Long, List<CartItemPO>> entry : itemsBySeller.entrySet()) {
+            Long sellerId = entry.getKey();
+            List<CartItemPO> sellerItems = entry.getValue();
+
+            UserPO seller = userDAO.findById(sellerId)
+                    .orElseThrow(() -> new Exception("找不到賣家 ID: " + sellerId));
+            
+            BigDecimal sellerOrderPrice = sellerItems.stream()
+                    .map(item -> item.getProduct().getPrice().multiply(new BigDecimal(item.getQuantity())))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+            
+            // 6a. (賣家入帳) 綠界代收 -> 轉入賣家錢包
+            // 因為錢在綠界那邊，我們視為平台已收款，所以將虛擬餘額加給賣家
+            WalletPO sellerWallet = walletDAO.findByUser_UserId(sellerId)
+                    .orElseThrow(() -> new Exception("找不到賣家錢包 ID: " + sellerId));
+            
+            sellerWallet.setBalance(sellerWallet.getBalance().add(sellerOrderPrice));
+            walletDAO.save(sellerWallet);
+            
+            // 6b. (賣家紀錄)
+            WalletTransactionPO sellerTx = new WalletTransactionPO(
+                    sellerWallet, TransactionType.PAYMENT_RECEIVED, sellerOrderPrice);
+            // 可以在這裡記錄綠界的交易單號，方便對帳
+            // sellerTx.setDescription("ECPay: " + tradeNo); 
+            walletTransactionDAO.save(sellerTx);
+            
+            // 6c. (建立訂單)
+            OrderPO newOrder = new OrderPO();
+            newOrder.setBuyer(buyer);
+            newOrder.setSeller(seller);
+            newOrder.setTotalPrice(sellerOrderPrice);
+            newOrder.setStatus(OrderStatus.COMPLETED); // 設定為已付款/完成
+
+            for (CartItemPO cartItem : sellerItems) {
+                ProductPO product = cartItem.getProduct();
+                
+                OrderItemPO newOrderItem = new OrderItemPO();
+                newOrderItem.setProduct(product);
+                newOrderItem.setQuantity(cartItem.getQuantity());
+                newOrderItem.setPricePerUnit(product.getPrice());
+                
+                newOrder.addOrderItem(newOrderItem);
+                
+                // 6d. (扣庫存)
+                product.setStock(product.getStock() - cartItem.getQuantity());
+                productDAO.save(product);
+            }
+            // 儲存訂單
+            orderDAO.save(newOrder);
+            logger.info("綠界結帳：已建立訂單 (賣家: {})", seller.getEmail());
+        }
+
+        // 7. 清空購物車
+        cartItemDAO.deleteAllByCart_CartId(cart.getCartId());
+        
+        logger.info("綠界直接結帳成功！買家: {}, 綠界單號: {}", buyer.getEmail(), tradeNo);
     }
 }

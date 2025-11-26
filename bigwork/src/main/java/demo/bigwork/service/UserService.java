@@ -31,6 +31,8 @@ public interface UserService {
 
 	void sendVerificationCode(String email) throws Exception;
 	
+	void verifyEmail(String email, String code) throws Exception;
+	
 	/**
      * 業務邏輯：建立密碼重設 Token
      * (給 /api/auth/forgot-password 呼叫)

@@ -74,13 +74,14 @@
                     <hr class="divider">
                     
                     <button id="checkout-btn" class="button-primary" disabled>
-                        結帳 ($0.00)
+                        錢包餘額結帳 ($0.00)
+                    </button>
+                    <button id="ecpay-checkout-btn" class="button-secondary" style="margin-top: 10px; background-color: #27ae60; color: white; border: none;">
+                        💳 綠界支付 (信用卡/ATM)
                     </button>
                     
-                    <h1>多元支付</h1>
-                    <form action="http://localhost:8080/createOrder" method="get">
-                        <button type="submit" class="button-secondary">前往第三方付款 (ECPay)</button>
-                    </form>
+                    <hr class="divider" style="margin-top: 20px;">
+                    
                     <button id="clear-cart-btn" class="button-secondary">
                         清空購物車
                     </button>
@@ -91,7 +92,6 @@
     </div> 
     
     <div id="topup-modal-overlay" class="modal-overlay">
-        
         <div class="modal-content modal-sm">
             <div class="modal-header">
                 <h5 class="modal-title">💸 電子錢包儲值</h5>

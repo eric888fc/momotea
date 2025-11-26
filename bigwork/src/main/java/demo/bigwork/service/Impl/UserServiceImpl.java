@@ -215,6 +215,26 @@ public class UserServiceImpl implements UserService {
         logger.info("已為使用者 {} 產生密碼重設連結。",user.getEmail());
         logger.info(resetLink);
     }
+    
+    @Override
+    public void verifyEmail(String email, String code) throws Exception {
+        // 簡單檢查參數
+        if (email == null || !email.contains("@")) {
+            throw new Exception("Email 格式錯誤");
+        }
+        if (code == null || code.isEmpty()) {
+            throw new Exception("驗證碼不可為空");
+        }
+
+        // 用 VerificationCodeService 檢查驗證碼
+        if (!codeService.validateCode(email, code)) {
+            throw new Exception("驗證碼錯誤或已過期");
+        }
+
+        // ✅ 這裡「先不要」移除驗證碼
+        //    讓使用者驗證成功後還可以用同一組 code 去註冊
+        logger.info("Email {} 驗證成功", email);
+    }
 
     @Override
     public void resetPassword(String token, String newPassword) throws Exception {

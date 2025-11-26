@@ -1,6 +1,7 @@
 package demo.bigwork.dao;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,9 +72,14 @@ public interface UserDAO extends JpaRepository<UserPO, Long> {
      */
     boolean existsByEmail(String email);
     
+    
     Optional<UserPO> findByAdminCode(String adminCode);
+    
+    List<UserPO> findByRole(UserRole role);
 
-    /** 指定期間某角色的新會員數 */
+    /**
+     * 統計指定時間區間內，新註冊的會員數（依角色）
+     */
     @Query("SELECT COALESCE(COUNT(u), 0) " +
            "FROM UserPO u " +
            "WHERE u.createdAt >= :start " +
