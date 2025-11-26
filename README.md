@@ -167,6 +167,21 @@
           </td>
         </tr>
       </table>
+      
+    * 匯出報表功能。
+    <img width="547" height="467" alt="image" src="https://github.com/user-attachments/assets/23c05cfb-7c48-4411-8295-b4b52eec8eb1" />
+    
+    * 管理全部買家/賣家，擁有檢視訂單跟上架商品，以及刪除帳號等功能。
+      <table>
+        <tr>
+          <td valign="top">
+            <img width="1138" height="491" alt="image" src="https://github.com/user-attachments/assets/62997c5a-f0a4-4953-ad11-04eba0b83349" />
+          </td>
+          <td valign="top">
+            <img width="1126" height="500" alt="image" src="https://github.com/user-attachments/assets/8f8af622-6d43-4082-9044-47d9ed7e44ae" />
+          </td>
+        </tr>
+      </table>
 ---
 
 ## 🛠️ 技術棧 (Technology Stack)
@@ -177,7 +192,7 @@
 | **前端 (Frontend)** | Vanilla JavaScript (ES6+ Async/Await, Fetch API), HTML5, CSS3 |
 | **資料庫 (Database)** | MySQL |
 | **驗證 (Validation)** | `jakarta.validation` ( ` @Valid`, `@Pattern` ) |
-| **Java 核心** | POJO (實體), VO (資料傳輸), DAO (儲存庫), Service, Controller 分層架構 |
+| **Java 核心** | POJO (實體), VO (資料傳輸), DAO (儲存庫), Service/Controller (分層架構), Util (額外工具)|
 
 ---
 
@@ -211,12 +226,12 @@
 ### 資料表介紹 (Table Definitions)
 
 #### 1. 使用者 & 認證 (User & Auth)
-* **`users`**: 核心使用者表,`role` 欄位 ('BUYER' / 'SELLER' / 'ADMIN') 用於區分角色,'admin_code'用來存放管理員編號。
+* **`users`**: 核心使用者表。`role` 欄位 ('BUYER' / 'SELLER' / 'ADMIN') 用於區分角色,'admin_code'用來存放管理員編號。
 * **`password_reset_tokens`**: 存放「忘記密碼」時產生的一次性 Token。關聯 `user_id`。
 
 #### 2. 商品 & 分類 (Product & Catalog)
 * **`categories`**: 商品分類表。`parent_category_id` 欄位（關聯自己）用於實現**樹狀**分類結構。
-* **`products`**: 商品主表。關聯 `seller_id` (賣家) 和 `category_id` (分類)。
+* **`products`**: 商品主表。關聯 `seller_id` (賣家) 和 `category_id` (分類)，'image_url'用於存放圖片路徑。
 * **`product_ratings`**: 商品評價表。(關鍵) 它**不**直接關聯 `products`，而是關聯 `order_item_id`，以確保只有**已購買**的買家才能評價。
 
 #### 3. 購物車 & 訂單 (Cart & Order)
