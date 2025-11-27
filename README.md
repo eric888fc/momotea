@@ -294,12 +294,14 @@
 
 2.  **開啟cmd:**
     * 在cmd中cd 到資料夾路徑。
-    * 在 cmd上執行 `java -jar bigwork-0.0.1-SNAPSHOT.jar`。
+    * 在 cmd上執行
+     ```bash
+      java -jar bigwork-0.0.1-SNAPSHOT.jar
+      ```
     <img width="622" height="166" alt="image" src="https://github.com/user-attachments/assets/65343b9b-5779-4eb7-a65f-b0441af1fe1e" />
 
 3.  **開始使用:**
-    * 在您的瀏覽器輸入 `http://localhost:8080/` ，就可以開啟角色選擇畫面了。
-    <img width="1918" height="941" alt="image" src="https://github.com/user-attachments/assets/1a35b2f0-72d6-47a2-a797-51dc6041cfb2" />
+    *在VS code開啟Live Server就可以使用了
 
 ---
 
