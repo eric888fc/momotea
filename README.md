@@ -294,7 +294,10 @@
 
 2.  **開啟cmd:**
     * 在cmd中cd 到資料夾路徑。
-    * 在 cmd上執行 `java -jar bigwork-0.0.1-SNAPSHOT.jar`。
+    * 在 cmd上執行
+     ```bash
+      java -jar bigwork-0.0.1-SNAPSHOT.jar
+      ```
     <img width="622" height="166" alt="image" src="https://github.com/user-attachments/assets/65343b9b-5779-4eb7-a65f-b0441af1fe1e" />
 
 3.  **開始使用:**
