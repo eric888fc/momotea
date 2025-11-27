@@ -1,1 +1,0 @@
-ngrok http --domain=gayla-unbriefed-unreluctantly.ngrok-free.dev 8080
