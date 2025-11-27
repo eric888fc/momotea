@@ -2,8 +2,8 @@
 
 這是一個功能完整的全端電商平台專案，模擬一個多賣家 (Multi-Seller) 的市集（如蝦皮或 Amazon）。
 
-* **後端 (Backend):** 使用 Java Spring Boot 構建，包含 JWT 安全認證、RESTful API、JPA 資料庫管理和多角色權限控制。
-* **前端 (Frontend):** 使用 Vanilla JavaScript (ES6+), HTML5, 和 CSS3 構建，不依賴任何框架 (like React/Vue)，專注於透過 `fetch` API 實作非同步 (Async/Await) 頁面渲染。
+* **後端 (Backend):** 使用 Java Spring Boot 構建，架構包含 JWT 安全認證、RESTful API、JPA 資料庫管理。整合 綠界科技 (ECPay) 金流 實現第三方支付，並具備完整的 RBAC 角色權限控制（買家、賣家、管理員）。
+* **前端 (Frontend):** 使用 Vanilla JavaScript (ES6+), HTML5, 和 CSS3 構建，不依賴任何框架 (like React/Vue)，專注於透過 fetch API 實作非同步 (Async/Await) 頁面渲染與金流串接。
 
 ---
 
@@ -83,7 +83,8 @@
           <td valign="top" width="50%"><img width="100%" alt="綠界付款頁面" src="https://github.com/user-attachments/assets/0602085b-bb93-4619-bfe9-037f6a3231f0" /></td>
         </tr>
       </table>
-
+    * **交易紀錄**：結帳成功後會將錢包/帳戶的金額變動輸入資料庫裡
+      <img width="653" height="308" alt="image" src="https://github.com/user-attachments/assets/f56ef687-69c7-42bf-9f4e-8eb8685b2baa" />
 * **訂單與評價:**
     * 瀏覽歷史訂單列表與詳細資訊。
       <img width="800" alt="訂單列表" src="https://github.com/user-attachments/assets/49e2ac64-403d-43e4-b27c-737bb46de356" />
