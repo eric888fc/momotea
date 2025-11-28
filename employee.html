@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Employee jQuery Main Page</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+</head>
+
+<body>
+    <h1>Welcome Spring Boot Employee Main</h1>
+    <!--buttons-->
+
+    <!--新增資料的form-->
+    <form id="addForm" style="display: none;">
+        <fieldset><legend>新增員工資料</legend>
+        員工姓氏: <input type="text" id="lastName" value="Peter"><br>
+        員工名字: <input type="text" id="firstName" value="Tsai"><br>
+        電子郵件: <input type="text" id="email" value="pt@example.com"><br>
+        <input type="button" onclick="addEmployee" value="新增員工">
+        </fieldset>
+    </form>
+    <!--div-->
+    <div id="divEmployeeForm"></div>
+    <!--table-->
+    <table border="1" width="80%">
+        <thead>
+            <tr>
+                <th>員工姓氏</th><th>員工名字</th><th>電子郵件</th><th>Action</th>                
+            </tr>
+        </thead>
+        <tbody id="empTable">
+        </tbody>
+    </table>
+    <script src="./js/employee.js">
+    </script>
+</body>
+</html>
